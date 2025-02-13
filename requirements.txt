@@ -1,1 +1,1 @@
-markdown==3.7
+kivy==2.3.0
