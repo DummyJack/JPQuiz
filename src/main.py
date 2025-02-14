@@ -14,7 +14,7 @@ resource_add_path(os.path.abspath(os.path.dirname(__file__)))
 
 # 註冊中文字體
 LabelBase.register(name='NotoSansTC',
-                  fn_regular='NotoSansTC-VariableFont_wght.ttf')
+                  fn_regular='resources/NotoSansTC-VariableFont_wght.ttf')
 
 # Kivy UI 設計
 KV = '''
