@@ -1,4 +1,3 @@
-import os
 import sys
 import time
 from watchdog.observers import Observer
@@ -24,6 +23,9 @@ class CodeChangeHandler(FileSystemEventHandler):
         if self.process:
             self.process.terminate()
             self.process.wait()
+    
+        # 先執行 crawlHistory.py
+        subprocess.run([sys.executable, "crawlHistory.py"], check=True)
         
         print("\n啟動應用程式...")
         self.process = subprocess.Popen([sys.executable, "src/main.py"])
