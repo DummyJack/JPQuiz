@@ -10,7 +10,7 @@ def process_conversations_and_add_feedback(input_dir, output_dir):
     for input_file in md_files:
         # 設定輸入和輸出檔案的完整路徑
         input_path = os.path.join(input_dir, input_file)
-        output_file = input_file.replace('.md', '-with-feedback.md')
+        output_file = input_file.replace('.md', '-rule.mdc')
         output_path = os.path.join(output_dir, output_file)
         
         # 讀取原始 md 文件
@@ -61,28 +61,35 @@ def process_conversations_and_add_feedback(input_dir, output_dir):
         if os.path.exists(output_path):
             with open(output_path, 'r', encoding='utf-8') as f:
                 existing_content = f.read()
-                existing_sections = existing_content.split('---')
-                for section in existing_sections:
-                    if '_**User**_' in section:
-                        user_content = section.split('_**User**_')[1].strip()
-                        existing_conversations.append(user_content)
+                # 如果檔案為空，添加標題
+                if not existing_content and main_title:
+                    with open(output_path, 'w', encoding='utf-8') as f:
+                        f.write(f"{main_title}\n\n")
+                else:
+                    existing_sections = existing_content.split('---')
+                    for section in existing_sections:
+                        if '_**User**_' in section:
+                            user_content = section.split('_**User**_')[1].strip()
+                            existing_conversations.append(user_content)
+        else:
+            # 如果是新檔案，創建並加入標題
+            with open(output_path, 'w', encoding='utf-8') as f:
+                if main_title:
+                    f.write(f"{main_title}\n\n")
 
         # 只添加新的對話
-        for conv in new_conversations:
-            if conv['user'] not in existing_conversations:
-                output_content += f"_**User**_\n\n{conv['user']}\n\n---\n\n"
-                output_content += f"_**Assistant**_\n\n{conv['assistant']}\n\n---\n\n"
-                output_content += f"_**Feedback**_\n\n---\n\n"
+        with open(output_path, 'a', encoding='utf-8') as f:
+            for conv in new_conversations:
+                if conv['user'] not in existing_conversations:
+                    f.write(f"_**User**_\n\n{conv['user']}\n\n---\n\n")
+                    f.write(f"_**Assistant**_\n\n{conv['assistant']}\n\n---\n\n")
+                    f.write(f"_**Feedback**_\n\n---\n\n")
 
-        # 寫入檔案
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(output_content)
-        
         print(f"已處理檔案：{output_file}")
 
 if __name__ == "__main__":
     input_dir = ".specstory/history"
-    output_dir = ".specstory/feedback"
+    output_dir = ".cursor/rules"
     
     # 處理所有檔案
     process_conversations_and_add_feedback(input_dir, output_dir)
