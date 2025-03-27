@@ -1,0 +1,3 @@
+# Ignore SpecStory derived-cursor-rules.mdc backup files
+.specstory/
+README.md
