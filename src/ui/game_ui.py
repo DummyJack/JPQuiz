@@ -72,18 +72,7 @@ class GameUI(FloatLayout):
             opacity=0
         )
         self.back_button.bind(on_press=self.return_to_main)
-        
-        # 製作人資訊標籤（非按鈕）
-        self.info_label = Label(
-            text="製作人：JPQuiz開發團隊",
-            font_name="NotoSansTC",
-            font_size=dp(20),
-            size_hint=(1, 0.08),
-            pos_hint={'center_x': 0.5, 'y': 0},
-            color=(1, 1, 1, 1),
-            opacity=0
-        )
-        self.add_widget(self.info_label)
+
         
         # 初始狀態顯示選項
         self.show_options()
@@ -94,13 +83,11 @@ class GameUI(FloatLayout):
         Animation.cancel_all(self.title)
         Animation.cancel_all(self.counter)
         Animation.cancel_all(self.options_layout)
-        Animation.cancel_all(self.info_label)
         
         # 重設透明度
         self.title.opacity = 0
         self.counter.opacity = 0
         self.options_layout.opacity = 0
-        self.info_label.opacity = 0
         
         # 標題動畫
         anim1 = Animation(opacity=1, duration=0.4)
@@ -113,10 +100,6 @@ class GameUI(FloatLayout):
         # 選項按鈕動畫
         anim3 = Animation(opacity=0, duration=0) + Animation(opacity=1, duration=0.5, d=0.2)
         anim3.start(self.options_layout)
-        
-        # 資訊標籤動畫
-        anim4 = Animation(opacity=0, duration=0) + Animation(opacity=1, duration=0.4, d=0.3)
-        anim4.start(self.info_label)
         
     def reset_game(self):
         """重置遊戲狀態"""
