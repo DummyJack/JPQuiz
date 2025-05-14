@@ -6,6 +6,8 @@ globs: *
 ## PROJECT DOCUMENTATION & CONTEXT SYSTEM
 
 All project documentation, including design specifications, coding standards, and meeting notes, should be stored in the project's root directory.  Use markdown (.md) format for all documents.  Version updates should be noted within the relevant sections of this file.  The file `2025-04-01_04-44-jptest-專案需求-初建立.md` (ec3823ee-f169-42a2-97a2-d3aa19bd6552) documents the initial project requirements. The project's initial structure and code examples are documented in `2025-04-01_04-44-jptest-專案需求-初建立.md`. Version 2025-05-14 updates include new file structure and code examples.  Additional project requirements are documented in `2025-04-01_04-44-jptest-專案-需求.md` (ec3823ee-f169-42a2-97a2-d3aa19bd6552).  The document `2025-04-01_04-44-jpquiz-專案-需求.md` (ec3823ee-f169-42a2-97a2-d3aa19bd6552) details additional project requirements and initial code implementation. Files `2025-04-01_04-44-jpquiz-專案-需求.md` (ec3823ee-f169-42a2-97a2-d3aa19bd6552) contain further project requirements and initial code implementation details.  The document `2025-04-01_04-44-jpquiz-專案-需求.md` (ec3823ee-f169-42a2-97a2-d3aa19bd6552) should be referenced for UI design specifications (@mainUI.png, @gameUI.png).  The file `2025-05-14_04-58-小處裡.md` (a42e5ca4-b4a1-49c7-8bb4-ce247ab1f512) contains additional updates and modifications to the project.
+The file `2025-05-14_07-10-untitled.md` (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) and `2025-05-14_07-10-資料庫設計與遊戲邏輯修改.md` (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) details database restructuring and game logic modifications.  This document details the new database schema: `{japanese: String, level: int, meaning: String}`.  The initial data includes `{japanese: "試みる", level: 5, meaning: "測試"}`.  The file `2025-05-14_07-10-資料庫設計與遊戲邏輯修改.md` details further database schema modifications and data insertion rules.  The minimum number of entries in the `word` collection must be 10.  Data validation rules for the `word` collection are detailed in the `2025-05-14_07-10-資料庫設計與遊戲邏輯修改.md` document.
+Added 2025-05-14_07-10-功能.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailing game logic and database schema updates.
 
 
 ## TECH STACK
@@ -23,6 +25,7 @@ All project documentation, including design specifications, coding standards, an
 - Use consistent indentation (4 spaces).
 - Write clear, concise, and well-documented code.
 - All code should be placed in the `src` directory. UI-related code should be in `src/ui`, and functional code should be in `src/functions`.
+- Database interaction should follow the structure defined in `2025-05-14_07-10-untitled.md` (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) and `2025-05-14_07-10-資料庫設計與遊戲邏輯修改.md` (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee).
 
 
 ## WORKFLOW & RELEASE RULES
@@ -58,6 +61,7 @@ JPQuiz/
 │   ├── main.py
 │   ├── functions/
 │   │   └── game_functions.py
+│   │   └── db_manager.py
 │   └── ui/
 │       ├── main_ui.py
 │       └── game_ui.py
@@ -66,6 +70,8 @@ JPQuiz/
 │   │   └── NotoSansTC-VariableFont_wght.ttf
 │   └── icons/
 │       └── help_icon.png
+├── src/scripts/
+│   └── insert_n5_data.py
 ├── README.md
 └── requirements.txt
 
@@ -83,3 +89,16 @@ __pycache__/
 *.py[cod]
 *$py.class
 ```
+
+## DATABASE RULES
+
+- The `words` collection must contain at least 10 entries at all times.
+- The `japanese` field must contain only Japanese text (hiragana, katakana, or kanji).
+- The `level` field must be an integer between 1 and 5 (inclusive).
+- The `meaning` field must be a string.
+- Data initialization: The database is initialized by running `src/scripts/insert_n5_data.py`. A backup set of test data is available if this script fails.  The initialization process now runs `src/scripts/insert_n5_data.py` to populate the database. If this script fails, a backup set of test data is used.
+- Data validation:  The `words` collection uses MongoDB's schema validation to enforce the following rules:
+    - `japanese`: Must be a string containing only Japanese characters (hiragana, katakana, or kanji).
+    - `level`: Must be an integer between 1 and 5 (inclusive).
+    - `meaning`: Must be a string.
+    - Minimum 10 entries must exist in the `words` collection at all times. Deletion is prevented if this would result in fewer than 10 entries.  Data deletion is prevented if it would result in fewer than 10 entries in the collection.
