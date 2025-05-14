@@ -5,7 +5,7 @@ globs: *
 
 ## PROJECT DOCUMENTATION & CONTEXT SYSTEM
 
-All project documentation, including design specifications, coding standards, and meeting notes, should be stored in the project's root directory.  Use markdown (.md) format for all documents.  Version updates should be noted within the relevant sections of this file.  The file `2025-04-01_04-44-jptest-專案需求-初建立.md` documents the initial project requirements.  The initial project requirements are documented in `2025-04-01_04-44-jptest-專案需求-初建立.md` (ec3823ee-f169-42a2-97a2-d3aa19bd6552).  The project's initial structure and code examples are documented in `2025-04-01_04-44-jptest-專案需求-初建立.md`.  Version 2025-05-14 updates include new file structure and code examples.  Additional project requirements are documented in `2025-04-01_04-44-jptest-專案-需求.md` (ec3823ee-f169-42a2-97a2-d3aa19bd6552).
+All project documentation, including design specifications, coding standards, and meeting notes, should be stored in the project's root directory.  Use markdown (.md) format for all documents.  Version updates should be noted within the relevant sections of this file.  The file `2025-04-01_04-44-jptest-專案需求-初建立.md` (ec3823ee-f169-42a2-97a2-d3aa19bd6552) documents the initial project requirements. The project's initial structure and code examples are documented in `2025-04-01_04-44-jptest-專案需求-初建立.md`. Version 2025-05-14 updates include new file structure and code examples.  Additional project requirements are documented in `2025-04-01_04-44-jptest-專案-需求.md` (ec3823ee-f169-42a2-97a2-d3aa19bd6552).  The document `2025-04-01_04-44-jpquiz-專案-需求.md` (ec3823ee-f169-42a2-97a2-d3aa19bd6552) details additional project requirements and initial code implementation. Files `2025-04-01_04-44-jpquiz-專案-需求.md` (ec3823ee-f169-42a2-97a2-d3aa19bd6552) contain further project requirements and initial code implementation details.  The document `2025-04-01_04-44-jpquiz-專案-需求.md` (ec3823ee-f169-42a2-97a2-d3aa19bd6552) should be referenced for UI design specifications (@mainUI.png, @gameUI.png).  The file `2025-05-14_04-58-小處裡.md` (a42e5ca4-b4a1-49c7-8bb4-ce247ab1f512) contains additional updates and modifications to the project.
 
 
 ## TECH STACK
@@ -30,7 +30,8 @@ All project documentation, including design specifications, coding standards, an
 - Commit changes frequently with descriptive commit messages.
 - Use a branching strategy (e.g., Gitflow) for managing development.
 - Before each release, perform thorough testing.
-- Testing should be conducted using the `run.py` file in the project root directory, not `src/run.py`.
+- Testing should be conducted using the `run.py` file in the project root directory.
+- All `__pycache__` folders should be ignored in the `.gitignore` file.
 
 
 ## DEBUGGING
@@ -40,11 +41,12 @@ All project documentation, including design specifications, coding standards, an
 
 ## UI/UX GUIDELINES
 
-- Main UI elements should include a title ("日文學習益智遊戲"), a "Start Game" button, a help icon (@help_icon.png), and author information ("製作人：JPQuiz開發團隊") displayed as static text.
+- Main UI elements should include a title ("日文學習益智遊戲"), a "Start Game" button, a help icon (@help_icon.png), and author information ("製作人：JPQuiz開發團隊") displayed as static text.  All UI elements should have a smooth transition and consistent background styling. Use animation to improve the user experience and reduce visual jarring during screen transitions. Use a consistent background color across all screens. The background color should be (0.15, 0.15, 0.2, 1).
 - Game UI should include a question label, four option buttons, a question counter, and author information displayed as static text.  The "Return to Main Menu" button should only appear after all questions are answered.
 - Use the NotoSansTC font for all text elements.
 - Error handling:  If a connection to MongoDB fails, the application should gracefully fallback to using test data.
 - The "Start Game" button should only be clickable once per game session.  After the game ends, the button should become clickable again.
+- Minimize visual jarring during transitions between the main and game screens.  Consider smooth transitions and consistent background styling.  Use animation to improve the user experience and reduce visual jarring during screen transitions. Use a consistent background color across all screens.
 
 
 ## PROJECT STRUCTURE
@@ -67,4 +69,17 @@ JPQuiz/
 ├── README.md
 └── requirements.txt
 
+```
+
+## .gitignore
+
+```
+.specstory/
+__pycache__/
+*/__pycache__/
+*/*/__pycache__/
+*/*/*/__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
 ```
