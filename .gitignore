@@ -1,1 +1,5 @@
-.specstory/
+__pycache__/
+
+# SpecStory
+.specstory/.project.json
+.specstory/ai_rules_backups
