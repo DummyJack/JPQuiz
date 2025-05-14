@@ -16,6 +16,10 @@ The file `2025-05-14_07-10-untitled.md` (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) a
 Added 2025-05-14_07-10-功能.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailing game logic and database schema updates.
 Added 2025-04-01_04-44-jpquiz-專案-初步建立.md (ec3823ee-f169-42a2-97a2-d3aa19bd6552) detailing initial project setup and code examples.
 Added 2025-05-14_07-10-jpquiz-專案-功能.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailing game logic updates and database schema modifications.
+Added 2025-05-14_07-10-log.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailing log implementation.  The log collection schema is: `{level: int, question: ObjectId, 時間: ISODate}`.
+Added 2025-05-14_07-10-log.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailing log implementation. The log collection schema is: `{level: int, question: ObjectId, 時間: ISODate}`.
+Added 2025-05-14_07-10-log.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailing log implementation. The log collection schema is: `{level: int, question: ObjectId, 時間: ISODate}`.
+Added 2025-04-01_04-44-jpquiz-專案-初步建立.md detailing initial project setup and code examples.
 
 
 ## TECH STACK
@@ -59,6 +63,8 @@ Added 2025-05-14_07-10-jpquiz-專案-功能.md (7208812d-9c2e-4fd9-baf9-ad346a7c
 - The "Start Game" button should only be clickable once per game session.  After the game ends, the button should become clickable again.
 - Minimize visual jarring during transitions between the main and game screens.  Consider smooth transitions and consistent background styling.  Use animation to improve the user experience and reduce visual jarring during screen transitions. Use a consistent background color across all screens.
 - After selecting an answer, disable all other answer options until the next question appears.
+- A log screen should display a table of game logs, including difficulty level, correct answers (e.g., "3/10"), and timestamp.  Clicking on the correct answers should display a detailed breakdown of each question's correctness.
+- A settings button should be added to the top-left corner of the main screen. Clicking this button should open a popup with two dropdown menus: one for selecting difficulty (N5-N1), and one for selecting the number of questions (10, 15, 20).  The popup should have a confirm button and a close button (X) in the top right corner.  The popup should not have a title or a separator line. Difficulty defaults to N5 and questions default to 10.  Only available difficulties and question counts supported by the `words` collection should be selectable.
 
 
 ## PROJECT STRUCTURE
@@ -70,10 +76,11 @@ JPQuiz/
 │   ├── main.py
 │   ├── functions/
 │   │   └── game_functions.py
-│   │   └── db_manager.py
+│   │   └── log_functions.py
 │   └── ui/
 │       ├── main_ui.py
 │       └── game_ui.py
+│       └── log_ui.py
 ├── resources/
 │   ├── fonts/
 │   │   └── NotoSansTC-VariableFont_wght.ttf
@@ -111,3 +118,4 @@ __pycache__/
     - `level`: Must be an integer between 1 and 5 (inclusive).
     - `meaning`: Must be a string.
     - Minimum 10 entries must exist in the `words` collection at all times. Deletion is prevented if this would result in fewer than 10 entries.
+- A `logs` collection must be created to store game logs. The schema for the `logs` collection is: `{level: int, question: ObjectId, 時間: ISODate}`.  The `question` field should reference the `_id` of a document in the `words` collection.  Logs are recorded after each game session.
