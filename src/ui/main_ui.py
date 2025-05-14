@@ -2,8 +2,8 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
-from kivy.uix.image import Image
 from kivy.metrics import dp
+from kivy.animation import Animation
 
 class MainUI(FloatLayout):
     def __init__(self, app=None, **kwargs):
@@ -16,7 +16,9 @@ class MainUI(FloatLayout):
             font_name="NotoSansTC",
             font_size=dp(36),
             size_hint=(1, 0.2),
-            pos_hint={'top': 1, 'center_x': 0.5}
+            pos_hint={'top': 1, 'center_x': 0.5},
+            color=(1, 1, 1, 1),
+            opacity=0
         )
         self.add_widget(self.title)
         
@@ -27,7 +29,8 @@ class MainUI(FloatLayout):
             font_size=dp(24),
             size_hint=(0.5, 0.1),
             pos_hint={'center_x': 0.5, 'center_y': 0.5},
-            background_color=(0.4, 0.5, 0.9, 1)
+            background_color=(0.4, 0.5, 0.9, 1),
+            opacity=0
         )
         self.start_button.bind(on_press=self.start_game)
         self.add_widget(self.start_button)
@@ -38,7 +41,8 @@ class MainUI(FloatLayout):
             pos_hint={'right': 0.98, 'top': 0.98},
             background_normal='help_icon.png',
             background_down='help_icon.png',
-            border=(0, 0, 0, 0)
+            border=(0, 0, 0, 0),
+            opacity=0
         )
         self.help_button.bind(on_press=self.show_help)
         self.add_widget(self.help_button)
@@ -55,14 +59,36 @@ class MainUI(FloatLayout):
         
         # 製作人資訊標籤（非按鈕）
         self.info_label = Label(
-            text="製作人：JPQuiz開發團隊",
+            text="製作人：書賢、Cursor",
             font_name="NotoSansTC",
             font_size=dp(20),
             size_hint=(1, 0.08),
             pos_hint={'center_x': 0.5, 'y': 0},
-            color=(1, 1, 1, 1)
+            color=(1, 1, 1, 1),
+            opacity=0
         )
         self.add_widget(self.info_label)
+        
+        # 添加漸入動畫
+        self.schedule_animations()
+    
+    def schedule_animations(self):
+        """安排元素的漸入動畫"""
+        # 標題動畫
+        anim1 = Animation(opacity=1, duration=0.5)
+        anim1.start(self.title)
+        
+        # 按鈕動畫
+        anim2 = Animation(opacity=0, duration=0) + Animation(opacity=1, duration=0.5, d=0.3)
+        anim2.start(self.start_button)
+        
+        # 幫助按鈕動畫
+        anim3 = Animation(opacity=0, duration=0) + Animation(opacity=1, duration=0.5, d=0.4)
+        anim3.start(self.help_button)
+        
+        # 資訊標籤動畫
+        anim4 = Animation(opacity=0, duration=0) + Animation(opacity=1, duration=0.5, d=0.5)
+        anim4.start(self.info_label)
     
     def start_game(self, instance):
         """開始遊戲"""

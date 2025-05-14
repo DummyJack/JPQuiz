@@ -4,6 +4,7 @@ from kivy.uix.label import Label
 from kivy.uix.gridlayout import GridLayout
 from kivy.metrics import dp
 from kivy.clock import Clock
+from kivy.animation import Animation
 
 from functions.game_functions import GameFunctions
 
@@ -20,7 +21,8 @@ class GameUI(FloatLayout):
             font_size=dp(24),
             size_hint=(1, 0.2),
             pos_hint={'top': 1, 'center_x': 0.5},
-            color=(1, 1, 1, 1)
+            color=(1, 1, 1, 1),
+            opacity=0
         )
         self.add_widget(self.title)
         
@@ -31,7 +33,8 @@ class GameUI(FloatLayout):
             font_size=dp(18),
             size_hint=(1, 0.1),
             pos_hint={'top': 0.85, 'center_x': 0.5},
-            color=(1, 1, 1, 1)
+            color=(1, 1, 1, 1),
+            opacity=0
         )
         self.add_widget(self.counter)
         
@@ -41,7 +44,8 @@ class GameUI(FloatLayout):
             spacing=dp(10),
             padding=dp(20),
             size_hint=(0.8, 0.4),
-            pos_hint={'center_x': 0.5, 'center_y': 0.5}
+            pos_hint={'center_x': 0.5, 'center_y': 0.5},
+            opacity=0
         )
         self.add_widget(self.options_layout)
         
@@ -64,7 +68,8 @@ class GameUI(FloatLayout):
             font_size=dp(24),
             size_hint=(0.5, 0.1),
             pos_hint={'center_x': 0.5, 'center_y': 0.5},
-            background_color=(0.4, 0.5, 0.9, 1)
+            background_color=(0.4, 0.5, 0.9, 1),
+            opacity=0
         )
         self.back_button.bind(on_press=self.return_to_main)
         
@@ -75,12 +80,43 @@ class GameUI(FloatLayout):
             font_size=dp(20),
             size_hint=(1, 0.08),
             pos_hint={'center_x': 0.5, 'y': 0},
-            color=(1, 1, 1, 1)
+            color=(1, 1, 1, 1),
+            opacity=0
         )
         self.add_widget(self.info_label)
         
         # 初始狀態顯示選項
         self.show_options()
+    
+    def animate_elements(self):
+        """為界面元素添加動畫效果"""
+        # 清除所有動畫
+        Animation.cancel_all(self.title)
+        Animation.cancel_all(self.counter)
+        Animation.cancel_all(self.options_layout)
+        Animation.cancel_all(self.info_label)
+        
+        # 重設透明度
+        self.title.opacity = 0
+        self.counter.opacity = 0
+        self.options_layout.opacity = 0
+        self.info_label.opacity = 0
+        
+        # 標題動畫
+        anim1 = Animation(opacity=1, duration=0.4)
+        anim1.start(self.title)
+        
+        # 計數器動畫
+        anim2 = Animation(opacity=0, duration=0) + Animation(opacity=1, duration=0.4, d=0.1)
+        anim2.start(self.counter)
+        
+        # 選項按鈕動畫
+        anim3 = Animation(opacity=0, duration=0) + Animation(opacity=1, duration=0.5, d=0.2)
+        anim3.start(self.options_layout)
+        
+        # 資訊標籤動畫
+        anim4 = Animation(opacity=0, duration=0) + Animation(opacity=1, duration=0.4, d=0.3)
+        anim4.start(self.info_label)
         
     def reset_game(self):
         """重置遊戲狀態"""
@@ -97,6 +133,9 @@ class GameUI(FloatLayout):
         
         # 確保選項按鈕可見
         self.show_options()
+        
+        # 播放動畫
+        self.animate_elements()
         
         # 載入問題
         self.load_question()
@@ -171,7 +210,12 @@ class GameUI(FloatLayout):
         
         # 顯示返回主畫面按鈕
         if not self.back_button.parent:
+            # 重設按鈕透明度
+            self.back_button.opacity = 0
             self.add_widget(self.back_button)
+            # 添加淡入動畫
+            anim = Animation(opacity=1, duration=0.5)
+            anim.start(self.back_button)
     
     def return_to_main(self, instance):
         """返回主畫面"""
