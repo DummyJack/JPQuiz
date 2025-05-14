@@ -14,14 +14,14 @@ class DBManager:
             
             # 檢查連接
             self.client.server_info()
-            print("成功連接到MongoDB")
+            print("成功連接到 MongoDB")
             
             # 初始化測試數據(如果集合為空)
             if self.collection.count_documents({}) == 0:
                 self._initialize_test_data()
                 
         except pymongo.errors.ServerSelectionTimeoutError:
-            print("無法連接到MongoDB - 使用測試數據")
+            print("無法連接到 MongoDB")
             self.client = None
             self.db = None
             self.collection = None
@@ -30,74 +30,54 @@ class DBManager:
         """初始化測試數據"""
         test_data = [
             {
-                "word": "猫",
-                "pronunciation": "ねこ (neko)",
-                "meaning": "貓",
-                "options": ["貓", "狗", "鳥", "魚"],
-                "correct_index": 0
+                "japanese": "こんにちは",
+                "level": 5,
+                "meaning": "你好（白天使用）"
             },
             {
-                "word": "犬",
-                "pronunciation": "いぬ (inu)",
-                "meaning": "狗",
-                "options": ["貓", "狗", "鳥", "魚"],
-                "correct_index": 1
+                "japanese": "ありがとう",
+                "level": 5,
+                "meaning": "謝謝"
             },
             {
-                "word": "鳥",
-                "pronunciation": "とり (tori)",
-                "meaning": "鳥",
-                "options": ["貓", "狗", "鳥", "魚"],
-                "correct_index": 2
+                "japanese": "さようなら",
+                "level": 5,
+                "meaning": "再見"
             },
             {
-                "word": "魚",
-                "pronunciation": "さかな (sakana)",
-                "meaning": "魚",
-                "options": ["貓", "狗", "鳥", "魚"],
-                "correct_index": 3
+                "japanese": "おはよう",
+                "level": 5,
+                "meaning": "早安"
             },
             {
-                "word": "車",
-                "pronunciation": "くるま (kuruma)",
-                "meaning": "車",
-                "options": ["車", "船", "飛機", "火車"],
-                "correct_index": 0
+                "japanese": "すみません",
+                "level": 5,
+                "meaning": "對不起；不好意思"
             },
             {
-                "word": "本",
-                "pronunciation": "ほん (hon)",
-                "meaning": "書",
-                "options": ["書", "雜誌", "報紙", "筆記本"],
-                "correct_index": 0
+                "japanese": "いただきます",
+                "level": 5,
+                "meaning": "開動前的感謝用語"
             },
             {
-                "word": "水",
-                "pronunciation": "みず (mizu)",
-                "meaning": "水",
-                "options": ["水", "火", "土", "風"],
-                "correct_index": 0
+                "japanese": "おやすみなさい",
+                "level": 5,
+                "meaning": "晚安"
             },
             {
-                "word": "山",
-                "pronunciation": "やま (yama)",
-                "meaning": "山",
-                "options": ["山", "河", "海", "湖"],
-                "correct_index": 0
+                "japanese": "はじめまして",
+                "level": 5,
+                "meaning": "初次見面"
             },
             {
-                "word": "林檎",
-                "pronunciation": "りんご (ringo)",
-                "meaning": "蘋果",
-                "options": ["蘋果", "香蕉", "橙子", "梨"],
-                "correct_index": 0
+                "japanese": "お爺さん",
+                "level": 5,
+                "meaning": "爺爺"
             },
             {
-                "word": "学校",
-                "pronunciation": "がっこう (gakkou)",
-                "meaning": "學校",
-                "options": ["學校", "醫院", "公園", "圖書館"],
-                "correct_index": 0
+                "japanese": "おばあさん",
+                "level": 5,
+                "meaning": "奶奶"
             }
         ]
         
@@ -106,75 +86,30 @@ class DBManager:
             self.collection.insert_many(test_data)
             print(f"已初始化 {len(test_data)} 條測試數據")
     
-    def get_random_word(self):
-        """從資料庫中隨機獲取一個單詞"""
+    def get_all_words(self):
+        """獲取所有單詞"""
         if self.collection is None:
-            # 如果沒有連接到資料庫，返回測試數據
-            return self._get_test_word()
+            return self._get_test_words()
         
-        # 計算集合中的文檔數量
-        count = self.collection.count_documents({})
-        if count == 0:
-            return None
+        words = list(self.collection.find({}, {"_id": 0}))
+        if not words:
+            return self._get_test_words()
         
-        # 隨機選擇一個索引
-        random_index = random.randint(0, count - 1)
-        
-        # 獲取隨機文檔
-        word_data = self.collection.find().limit(1).skip(random_index)
-        
-        try:
-            word_doc = next(word_data)
-            # 轉換ObjectId為字符串
-            word_doc["_id"] = str(word_doc["_id"])
-            return word_doc
-        except StopIteration:
-            return None
+        return words
     
-    def _get_test_word(self):
-        """獲取預設測試單詞"""
-        test_words = [
-            {
-                "word": "猫",
-                "pronunciation": "ねこ (neko)",
-                "meaning": "貓",
-                "options": ["貓", "狗", "鳥", "魚"],
-                "correct_index": 0
-            },
-            {
-                "word": "犬",
-                "pronunciation": "いぬ (inu)",
-                "meaning": "狗",
-                "options": ["貓", "狗", "鳥", "魚"],
-                "correct_index": 1
-            },
-            {
-                "word": "鳥",
-                "pronunciation": "とり (tori)",
-                "meaning": "鳥",
-                "options": ["貓", "狗", "鳥", "魚"],
-                "correct_index": 2
-            },
-            {
-                "word": "魚",
-                "pronunciation": "さかな (sakana)",
-                "meaning": "魚",
-                "options": ["貓", "狗", "鳥", "魚"],
-                "correct_index": 3
-            },
-            {
-                "word": "車",
-                "pronunciation": "くるま (kuruma)",
-                "meaning": "車",
-                "options": ["車", "船", "飛機", "火車"],
-                "correct_index": 0
-            }
-        ]
+    def get_random_words(self, count=10):
+        """從資料庫中隨機獲取指定數量的單詞"""
+        if self.collection is None:
+            return self._get_test_words()[:count]
         
-        return random.choice(test_words)
+        # 獲取全部單詞
+        all_words = list(self.collection.find({}, {"_id": 0}))
+        
+        # 隨機選擇指定數量的單詞
+        return random.sample(all_words, count)
     
     def close_connection(self):
         """關閉資料庫連接"""
         if self.client is not None:
             self.client.close()
-            print("已關閉MongoDB連接") 
+            print("已關閉 MongoDB 連接") 

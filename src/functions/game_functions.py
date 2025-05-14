@@ -8,41 +8,57 @@ class GameFunctions:
         self.correct_answers = 0
         self.db_manager = DBManager()
         self.correct_index = 0
+        self.questions = []
+        self.all_words = []
         
     def reset_game(self):
         """重置遊戲狀態"""
         self.current_question = 0
         self.correct_answers = 0
+        
+        # 獲取所有單詞以便生成選項
+        self.all_words = self.db_manager.get_all_words()
+        
+        # 獲取10個隨機問題
+        self.questions = self.db_manager.get_random_words(10)
+        
         return self.current_question, self.total_questions
     
     def load_question(self):
         """載入新問題"""
-        if self.current_question < self.total_questions:
-            # 從資料庫獲取問題
-            question_data = self.db_manager.get_random_word()
+        if self.current_question < self.total_questions and self.current_question < len(self.questions):
+            # 獲取當前問題
+            question_data = self.questions[self.current_question]
             
-            if not question_data:
-                # 如果沒有獲取到數據，使用預設數據
-                question_data = {
-                    "word": "日本語",
-                    "options": ["日本語", "英語", "中国語", "韓国語"],
-                    "correct_index": 0
-                }
+            # 提取日文單詞和正確答案（中文意思）
+            japanese_word = question_data["japanese"]
+            correct_meaning = question_data["meaning"]
             
-            # 更新問題和選項
-            word = question_data["word"]
+            # 生成選項（包括正確答案和3個隨機錯誤答案）
+            options = [correct_meaning]
             
-            # 打亂選項
-            options = question_data["options"].copy()
-            correct_option = options[question_data["correct_index"]]
+            # 從所有單詞中選擇3個不同的錯誤選項
+            other_meanings = [word["meaning"] for word in self.all_words 
+                            if word["meaning"] != correct_meaning]
+            
+            # 如果可用的錯誤選項不足3個，則重複使用
+            if len(other_meanings) < 3:
+                # 複製列表以避免修改原始數據
+                other_meanings = other_meanings * 3
+            
+            # 隨機選擇3個錯誤選項
+            wrong_options = random.sample(other_meanings, 3)
+            options.extend(wrong_options)
+            
+            # 打亂選項順序
             random.shuffle(options)
             
             # 更新正確答案的索引
-            self.correct_index = options.index(correct_option)
+            self.correct_index = options.index(correct_meaning)
             
             self.current_question += 1
             
-            return word, options, self.correct_index
+            return japanese_word, options, self.correct_index
         else:
             return None, None, None
     
@@ -63,4 +79,4 @@ class GameFunctions:
     
     def is_game_over(self):
         """檢查遊戲是否結束"""
-        return self.current_question >= self.total_questions 
+        return self.current_question >= self.total_questions or self.current_question >= len(self.questions) 
