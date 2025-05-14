@@ -10,9 +10,10 @@ class GameFunctions:
         self.correct_index = 0
         self.questions = []
         self.all_words = []
+        self.questions_with_options = []  # 預先生成的問題和選項
         
     def reset_game(self):
-        """重置遊戲狀態"""
+        """重置遊戲狀態並預先載入所有題目與選項"""
         self.current_question = 0
         self.correct_answers = 0
         
@@ -22,14 +23,9 @@ class GameFunctions:
         # 獲取10個隨機問題
         self.questions = self.db_manager.get_random_words(10)
         
-        return self.current_question, self.total_questions
-    
-    def load_question(self):
-        """載入新問題"""
-        if self.current_question < self.total_questions and self.current_question < len(self.questions):
-            # 獲取當前問題
-            question_data = self.questions[self.current_question]
-            
+        # 預先處理所有問題和選項
+        self.questions_with_options = []
+        for question_data in self.questions:
             # 提取日文單詞和正確答案（中文意思）
             japanese_word = question_data["japanese"]
             correct_meaning = question_data["meaning"]
@@ -43,7 +39,6 @@ class GameFunctions:
             
             # 如果可用的錯誤選項不足3個，則重複使用
             if len(other_meanings) < 3:
-                # 複製列表以避免修改原始數據
                 other_meanings = other_meanings * 3
             
             # 隨機選擇3個錯誤選項
@@ -53,8 +48,27 @@ class GameFunctions:
             # 打亂選項順序
             random.shuffle(options)
             
-            # 更新正確答案的索引
-            self.correct_index = options.index(correct_meaning)
+            # 記錄正確答案的索引
+            correct_index = options.index(correct_meaning)
+            
+            # 保存問題和選項
+            self.questions_with_options.append({
+                "japanese": japanese_word,
+                "options": options,
+                "correct_index": correct_index
+            })
+        
+        return self.current_question, self.total_questions
+    
+    def load_question(self):
+        """載入新問題，直接使用預先生成的問題和選項"""
+        if self.current_question < self.total_questions and self.current_question < len(self.questions_with_options):
+            # 獲取當前問題數據
+            question_data = self.questions_with_options[self.current_question]
+            
+            japanese_word = question_data["japanese"]
+            options = question_data["options"]
+            self.correct_index = question_data["correct_index"]
             
             self.current_question += 1
             
@@ -77,6 +91,6 @@ class GameFunctions:
         """獲取遊戲結果"""
         return self.correct_answers, self.total_questions
     
-    def is_game_over(self):
+    def is_game_over(self): 
         """檢查遊戲是否結束"""
-        return self.current_question >= self.total_questions or self.current_question >= len(self.questions) 
+        return self.current_question >= self.total_questions or self.current_question >= len(self.questions_with_options)
