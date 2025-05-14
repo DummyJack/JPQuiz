@@ -1,5 +1,6 @@
 import pymongo
 import random
+from datetime import datetime
 
 class DBManager:
     def __init__(self):
@@ -9,8 +10,10 @@ class DBManager:
             self.client = pymongo.MongoClient("mongodb://localhost:27017/", serverSelectionTimeoutMS=5000)
             # 選擇資料庫
             self.db = self.client["jp_quiz_db"]
-            # 選擇集合 (collection)
+            # 選擇單詞集合
             self.collection = self.db["words"]
+            # 選擇日誌集合
+            self.log_collection = self.db["logs"]
             
             # 檢查連接
             self.client.server_info()
@@ -25,6 +28,7 @@ class DBManager:
             self.client = None
             self.db = None
             self.collection = None
+            self.log_collection = None
             
     def _initialize_test_data(self):
         """初始化測試數據"""
@@ -91,7 +95,7 @@ class DBManager:
         if self.collection is None:
             return self._get_test_words()
         
-        words = list(self.collection.find({}, {"_id": 0}))
+        words = list(self.collection.find({}))
         if not words:
             return self._get_test_words()
         
@@ -103,13 +107,66 @@ class DBManager:
             return self._get_test_words()[:count]
         
         # 獲取全部單詞
-        all_words = list(self.collection.find({}, {"_id": 0}))
+        all_words = list(self.collection.find({}))
+        
+        if len(all_words) <= count:
+            return all_words
         
         # 隨機選擇指定數量的單詞
         return random.sample(all_words, count)
+    
+    def save_log(self, log_data):
+        """保存遊戲日誌到日誌集合"""
+        if self.log_collection is None:
+            print("無法保存日誌：資料庫連接未建立")
+            return None
+        
+        # 確保時間戳格式正確
+        if isinstance(log_data.get("timestamp"), str):
+            try:
+                log_data["timestamp"] = datetime.fromisoformat(log_data["timestamp"])
+            except ValueError:
+                log_data["timestamp"] = datetime.now()
+        
+        # 插入日誌記錄
+        result = self.log_collection.insert_one(log_data)
+        return str(result.inserted_id)
+    
+    def get_all_logs(self):
+        """獲取所有日誌記錄"""
+        if self.log_collection is None:
+            print("無法獲取日誌：資料庫連接未建立")
+            return []
+        
+        logs = list(self.log_collection.find().sort("timestamp", pymongo.DESCENDING))
+        
+        # 將MongoDB的ObjectId轉換為字符串
+        for log in logs:
+            log["_id"] = str(log["_id"])
+        
+        return logs
+    
+    def get_log_by_id(self, log_id):
+        """根據ID獲取特定日誌記錄"""
+        if self.log_collection is None:
+            print("無法獲取日誌：資料庫連接未建立")
+            return None
+        
+        try:
+            # 將字符串ID轉換回ObjectId
+            from bson.objectid import ObjectId
+            obj_id = ObjectId(log_id)
+            
+            log = self.log_collection.find_one({"_id": obj_id})
+            if log:
+                log["_id"] = str(log["_id"])
+            return log
+        except Exception as e:
+            print(f"獲取日誌時出錯：{e}")
+            return None
     
     def close_connection(self):
         """關閉資料庫連接"""
         if self.client is not None:
             self.client.close()
-            print("已關閉 MongoDB 連接") 
+            print("已關閉 MongoDB 連接")

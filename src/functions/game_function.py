@@ -11,11 +11,14 @@ class GameFunctions:
         self.questions = []
         self.all_words = []
         self.questions_with_options = []  # 預先生成的問題和選項
+        self.question_results = []  # 記錄每題的結果 (True: 正確, False: 錯誤)
+        self.current_level = 5  # 預設難度等級
         
     def reset_game(self):
         """重置遊戲狀態並預先載入所有題目與選項"""
         self.current_question = 0
         self.correct_answers = 0
+        self.question_results = []  # 清空結果記錄
         
         # 獲取所有單詞以便生成選項
         self.all_words = self.db_manager.get_all_words()
@@ -29,6 +32,9 @@ class GameFunctions:
             # 提取日文單詞和正確答案（中文意思）
             japanese_word = question_data["japanese"]
             correct_meaning = question_data["meaning"]
+            
+            # 設置當前等級
+            self.current_level = question_data.get("level", 5)
             
             # 生成選項（包括正確答案和3個隨機錯誤答案）
             options = [correct_meaning]
@@ -55,7 +61,8 @@ class GameFunctions:
             self.questions_with_options.append({
                 "japanese": japanese_word,
                 "options": options,
-                "correct_index": correct_index
+                "correct_index": correct_index,
+                "original_data": question_data  # 保存原始問題數據，包括_id
             })
         
         return self.current_question, self.total_questions
@@ -85,12 +92,38 @@ class GameFunctions:
             is_correct = True
             self.correct_answers += 1
         
+        # 記錄答題結果
+        self.question_results.append(is_correct)
+        
         return is_correct, self.correct_index
     
     def get_results(self):
         """獲取遊戲結果"""
         return self.correct_answers, self.total_questions
     
-    def is_game_over(self): 
+    def is_game_over(self):
         """檢查遊戲是否結束"""
         return self.current_question >= self.total_questions or self.current_question >= len(self.questions_with_options)
+    
+    def get_log_data(self):
+        """獲取日誌數據"""
+        return {
+            "level": self.current_level,
+            "questions": self.questions,
+            "correct_answers": self.correct_answers,
+            "question_results": self.question_results
+        }
+    
+    def get_question_details(self):
+        """獲取問題詳細信息列表"""
+        details = []
+        for i, question_data in enumerate(self.questions_with_options):
+            if i < len(self.question_results):  # 確保已經回答過這個問題
+                original_data = question_data.get("original_data", {})
+                details.append({
+                    "question_id": str(original_data.get("_id", i)),
+                    "japanese": question_data["japanese"],
+                    "meaning": original_data.get("meaning", ""),
+                    "is_correct": self.question_results[i]
+                })
+        return details

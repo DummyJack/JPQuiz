@@ -6,14 +6,17 @@ from kivy.metrics import dp
 from kivy.clock import Clock
 from kivy.animation import Animation
 
-from functions.game_functions import GameFunctions
+from functions.game_function import GameFunctions
+from functions.log_function import LogFunctions
 
 class GameUI(FloatLayout):
     def __init__(self, app=None, **kwargs):
         super(GameUI, self).__init__(**kwargs)
         self.app = app
-        self.game_functions = GameFunctions()
+        self.game_function = GameFunctions()
+        self.log_function = LogFunctions()
         self.answer_selected = False  # 標記是否已選擇答案
+        self.game_logged = False  # 標記是否已記錄遊戲結果
         
         # 標題
         self.title = Label(
@@ -106,6 +109,7 @@ class GameUI(FloatLayout):
         """重置遊戲狀態"""
         # 重設答案選擇狀態
         self.answer_selected = False
+        self.game_logged = False
         
         # 如果返回按鈕在界面上，先移除它
         if self.back_button.parent:
@@ -115,7 +119,7 @@ class GameUI(FloatLayout):
         self.title.text = "資料庫中隨機選出一個單字"
         
         # 使用功能類重置遊戲
-        current_question, total_questions = self.game_functions.reset_game()
+        current_question, total_questions = self.game_function.reset_game()
         self.update_counter(current_question + 1, total_questions)  # +1 因為題號從1開始顯示
         
         # 確保選項按鈕可見
@@ -146,14 +150,14 @@ class GameUI(FloatLayout):
         self.answer_selected = False
         
         # 使用功能類載入問題
-        word, options, correct_index = self.game_functions.load_question()
+        word, options, correct_index = self.game_function.load_question()
         
         if word is not None:
             # 更新問題和選項
             self.title.text = word
             
             # 更新問題計數器
-            self.update_counter(self.game_functions.current_question, self.game_functions.total_questions)
+            self.update_counter(self.game_function.current_question, self.game_function.total_questions)
             
             # 設置選項按鈕
             for i, option in enumerate(options):
@@ -180,7 +184,7 @@ class GameUI(FloatLayout):
         selected_index = self.option_buttons.index(instance)
         
         # 使用功能類檢查答案
-        is_correct, correct_index = self.game_functions.check_answer(selected_index)
+        is_correct, correct_index = self.game_function.check_answer(selected_index)
         
         if is_correct:
             # 答案正確
@@ -196,7 +200,7 @@ class GameUI(FloatLayout):
     
     def next_question(self):
         """加載下一個問題或顯示結果"""
-        if not self.game_functions.is_game_over():
+        if not self.game_function.is_game_over():
             self.load_question()
         else:
             self.show_results()
@@ -204,7 +208,7 @@ class GameUI(FloatLayout):
     def show_results(self):
         """顯示遊戲結果"""
         # 使用功能類獲取結果
-        correct_answers, total_questions = self.game_functions.get_results()
+        correct_answers, total_questions = self.game_function.get_results()
         
         # 顯示結果
         result_text = f"遊戲結束！\n正確答案: {correct_answers}/{total_questions}"
@@ -221,6 +225,24 @@ class GameUI(FloatLayout):
             # 添加淡入動畫
             anim = Animation(opacity=1, duration=0.5)
             anim.start(self.back_button)
+        
+        # 保存遊戲日誌，確保只保存一次
+        if not self.game_logged:
+            self.save_game_log()
+            self.game_logged = True
+    
+    def save_game_log(self):
+        """保存遊戲結果到日誌"""
+        # 使用功能類獲取日誌數據
+        log_data = self.game_function.get_log_data()
+        
+        # 保存到日誌
+        self.log_function.save_game_log(
+            level=log_data["level"],
+            questions=log_data["questions"],
+            correct_answers=log_data["correct_answers"],
+            question_results=log_data["question_results"]
+        )
     
     def return_to_main(self, instance):
         """返回主畫面"""

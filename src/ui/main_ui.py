@@ -5,10 +5,13 @@ from kivy.uix.popup import Popup
 from kivy.metrics import dp
 from kivy.animation import Animation
 
+from ui.log_ui import LogUI
+
 class MainUI(FloatLayout):
     def __init__(self, app=None, **kwargs):
         super(MainUI, self).__init__(**kwargs)
         self.app = app
+        self.log_ui = LogUI()
         
         # 標題
         self.title = Label(
@@ -28,12 +31,25 @@ class MainUI(FloatLayout):
             font_name="NotoSansTC",
             font_size=dp(24),
             size_hint=(0.5, 0.1),
-            pos_hint={'center_x': 0.5, 'center_y': 0.5},
+            pos_hint={'center_x': 0.5, 'center_y': 0.55},
             background_color=(0.4, 0.5, 0.9, 1),
             opacity=0
         )
         self.start_button.bind(on_press=self.start_game)
         self.add_widget(self.start_button)
+        
+        # 遊戲記錄按鈕
+        self.log_button = Button(
+            text="歷史記錄",
+            font_name="NotoSansTC",
+            font_size=dp(24),
+            size_hint=(0.5, 0.1),
+            pos_hint={'center_x': 0.5, 'center_y': 0.4},
+            background_color=(0.4, 0.7, 0.7, 1),
+            opacity=0
+        )
+        self.log_button.bind(on_press=self.log_ui.show_logs)
+        self.add_widget(self.log_button)
         
         # 說明按鈕使用圖標
         self.help_button = Button(
@@ -78,9 +94,13 @@ class MainUI(FloatLayout):
         anim1 = Animation(opacity=1, duration=0.5)
         anim1.start(self.title)
         
-        # 按鈕動畫
+        # 開始按鈕動畫
         anim2 = Animation(opacity=0, duration=0) + Animation(opacity=1, duration=0.5, d=0.3)
         anim2.start(self.start_button)
+        
+        # 記錄按鈕動畫
+        anim_log = Animation(opacity=0, duration=0) + Animation(opacity=1, duration=0.5, d=0.35)
+        anim_log.start(self.log_button)
         
         # 幫助按鈕動畫
         anim3 = Animation(opacity=0, duration=0) + Animation(opacity=1, duration=0.5, d=0.4)
@@ -106,4 +126,4 @@ class MainUI(FloatLayout):
             ),
             size_hint=(0.8, 0.6)
         )
-        popup.open() 
+        popup.open()
