@@ -4,6 +4,8 @@ from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.metrics import dp
 from kivy.animation import Animation
+from kivy.core.window import Window
+from kivy.graphics import Color, Rectangle
 
 from ui.log_ui import LogUI
 
@@ -53,7 +55,7 @@ class MainUI(FloatLayout):
         
         # 說明按鈕使用圖標
         self.help_button = Button(
-            size_hint=(0.08, 0.05),
+            size_hint=(0.08, 0.06),
             pos_hint={'right': 0.98, 'top': 0.98},
             background_normal='help_icon.png',
             background_down='help_icon.png',
@@ -65,12 +67,9 @@ class MainUI(FloatLayout):
         
         # 說明文字
         self.help_text = """
-            這是一個日文學習四選一益智遊戲。
+            1. 遊戲開始即可開始遊玩
 
-            遊戲說明：
-            1. 系統將從資料庫中隨機選取日文單字
-            2. 選擇正確的選項來回答問題
-            3. 總共有10題，答對越多分數越高
+            2. 點選歷史紀錄可以查看自己過去答題表現
         """
         
         # 製作人資訊標籤（非按鈕）
@@ -83,6 +82,15 @@ class MainUI(FloatLayout):
             color=(1, 1, 1, 1),
             opacity=0
         )
+        
+        # 為 info_label 添加背景
+        with self.info_label.canvas.before:
+            Color(0.2, 0.2, 0.3, 1)  # 稍微比背景色淺一點的顏色
+            self.info_bg = Rectangle(pos=self.info_label.pos, size=self.info_label.size)
+        
+        # 綁定事件以更新背景大小和位置
+        self.info_label.bind(pos=self._update_info_bg, size=self._update_info_bg)
+        
         self.add_widget(self.info_label)
         
         # 添加漸入動畫
@@ -117,13 +125,44 @@ class MainUI(FloatLayout):
     
     def show_help(self, instance):
         """顯示遊戲說明"""
+        # 創建浮動佈局作為彈出視窗的內容容器
+        content_layout = FloatLayout()
+        
+        # 添加說明文字標籤
+        content_label = Label(
+            text=self.help_text,
+            font_name="NotoSansTC",
+            font_size=dp(20),
+            pos_hint={'center_x': 0.4, 'top': 1.3},
+        )
+        content_layout.add_widget(content_label)
+        
+        # 創建自訂彈出視窗
         popup = Popup(
             title="遊戲說明",
+            title_size=dp(26),  # 放大標題
             title_font="NotoSansTC",
-            content=Label(
-                text=self.help_text,
-                font_name="NotoSansTC"
-            ),
-            size_hint=(0.8, 0.6)
+            title_align="center",  # 標題置中
+            content=content_layout,
+            size_hint=(0.8, 0.6),
+            separator_color=(0, 0, 0, 0),  # 去除藍色分隔線（設為透明）
+            auto_dismiss=True  # 允許點擊外部關閉
         )
+        
+        # 添加關閉按鈕 (X)
+        close_button = Button(
+            text="X",
+            size_hint=(0.1, 0.1),  # 稍微增加按鈕大小
+            pos_hint={'right': 0.99, 'top': 1.13},  # 移到更靠近右上角
+            background_color=(0.7, 0.7, 0.7, 1),  # 更改為淺灰色背景
+            color=(1, 1, 1, 1)  # 白色文字
+        )
+        close_button.bind(on_press=popup.dismiss)  # 按下按鈕關閉彈出視窗
+        content_layout.add_widget(close_button)
+        
         popup.open()
+
+    def _update_info_bg(self, instance, value):
+        """更新信息標籤背景的大小和位置"""
+        self.info_bg.pos = instance.pos
+        self.info_bg.size = instance.size
