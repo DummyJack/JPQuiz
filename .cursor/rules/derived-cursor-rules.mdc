@@ -1,0 +1,70 @@
+---
+description: AI rules derived by SpecStory from the project AI interaction history
+globs: *
+---
+
+## PROJECT DOCUMENTATION & CONTEXT SYSTEM
+
+All project documentation, including design specifications, coding standards, and meeting notes, should be stored in the project's root directory.  Use markdown (.md) format for all documents.  Version updates should be noted within the relevant sections of this file.  The file `2025-04-01_04-44-jptest-專案需求-初建立.md` documents the initial project requirements.  The initial project requirements are documented in `2025-04-01_04-44-jptest-專案需求-初建立.md` (ec3823ee-f169-42a2-97a2-d3aa19bd6552).  The project's initial structure and code examples are documented in `2025-04-01_04-44-jptest-專案需求-初建立.md`.  Version 2025-05-14 updates include new file structure and code examples.  Additional project requirements are documented in `2025-04-01_04-44-jptest-專案-需求.md` (ec3823ee-f169-42a2-97a2-d3aa19bd6552).
+
+
+## TECH STACK
+
+- Programming Language: Python
+- Framework: Kivy (version 2.2.1)
+- Database: MongoDB (ensure service is running; otherwise, fallback to test data)
+- Libraries: pymongo (version 4.5.0)
+- Font: NotoSansTC (located in `resources/fonts/NotoSansTC-VariableFont_wght.ttf`)
+
+
+## CODING STANDARDS
+
+- Follow PEP 8 style guidelines.
+- Use consistent indentation (4 spaces).
+- Write clear, concise, and well-documented code.
+- All code should be placed in the `src` directory. UI-related code should be in `src/ui`, and functional code should be in `src/functions`.
+
+
+## WORKFLOW & RELEASE RULES
+
+- Commit changes frequently with descriptive commit messages.
+- Use a branching strategy (e.g., Gitflow) for managing development.
+- Before each release, perform thorough testing.
+- Testing should be conducted using the `run.py` file in the project root directory, not `src/run.py`.
+
+
+## DEBUGGING
+
+- Use print statements for basic debugging.  More advanced debugging tools may be added as needed.
+
+
+## UI/UX GUIDELINES
+
+- Main UI elements should include a title ("日文學習益智遊戲"), a "Start Game" button, a help icon (@help_icon.png), and author information ("製作人：JPQuiz開發團隊") displayed as static text.
+- Game UI should include a question label, four option buttons, a question counter, and author information displayed as static text.  The "Return to Main Menu" button should only appear after all questions are answered.
+- Use the NotoSansTC font for all text elements.
+- Error handling:  If a connection to MongoDB fails, the application should gracefully fallback to using test data.
+- The "Start Game" button should only be clickable once per game session.  After the game ends, the button should become clickable again.
+
+
+## PROJECT STRUCTURE
+
+```
+JPQuiz/
+├── run.py
+├── src/
+│   ├── main.py
+│   ├── functions/
+│   │   └── game_functions.py
+│   └── ui/
+│       ├── main_ui.py
+│       └── game_ui.py
+├── resources/
+│   ├── fonts/
+│   │   └── NotoSansTC-VariableFont_wght.ttf
+│   └── icons/
+│       └── help_icon.png
+├── README.md
+└── requirements.txt
+
+```
