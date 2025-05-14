@@ -20,6 +20,7 @@ Added 2025-05-14_07-10-log.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailing l
 Added 2025-05-14_07-10-log.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailing log implementation. The log collection schema is: `{level: int, question: ObjectId, 時間: ISODate}`.
 Added 2025-05-14_07-10-log.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailing log implementation. The log collection schema is: `{level: int, question: ObjectId, 時間: ISODate}`.
 Added 2025-04-01_04-44-jpquiz-專案-初步建立.md detailing initial project setup and code examples.
+Added 2025-05-14_13-30-jpquiz-專案-ui-ux.md (cba5d1d7-674c-467c-8a08-c1cf68003a84) detailing UI/UX updates for the help popup.
 
 
 ## TECH STACK
@@ -65,6 +66,7 @@ Added 2025-04-01_04-44-jpquiz-專案-初步建立.md detailing initial project s
 - After selecting an answer, disable all other answer options until the next question appears.
 - A log screen should display a table of game logs, including difficulty level, correct answers (e.g., "3/10"), and timestamp.  Clicking on the correct answers should display a detailed breakdown of each question's correctness.
 - A settings button should be added to the top-left corner of the main screen. Clicking this button should open a popup with two dropdown menus: one for selecting difficulty (N5-N1), and one for selecting the number of questions (10, 15, 20).  The popup should have a confirm button and a close button (X) in the top right corner.  The popup should not have a title or a separator line. Difficulty defaults to N5 and questions default to 10.  Only available difficulties and question counts supported by the `words` collection should be selectable.
+- The help button should be a circle. The `info_label` should have a background color that matches the main UI. The help popup should have a close button ("X"), no separator line, centered title and text, and appropriate spacing between items in the `help_text`. The close button should be light gray and positioned in the top right corner.
 
 
 ## PROJECT STRUCTURE
