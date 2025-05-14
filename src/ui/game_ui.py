@@ -13,6 +13,7 @@ class GameUI(FloatLayout):
         super(GameUI, self).__init__(**kwargs)
         self.app = app
         self.game_functions = GameFunctions()
+        self.answer_selected = False  # 標記是否已選擇答案
         
         # 標題
         self.title = Label(
@@ -28,7 +29,7 @@ class GameUI(FloatLayout):
         
         # 問題計數
         self.counter = Label(
-            text="(總共 10 題)",
+            text="第 1 題 / 10 題",
             font_name="NotoSansTC",
             font_size=dp(18),
             size_hint=(1, 0.1),
@@ -103,6 +104,9 @@ class GameUI(FloatLayout):
         
     def reset_game(self):
         """重置遊戲狀態"""
+        # 重設答案選擇狀態
+        self.answer_selected = False
+        
         # 如果返回按鈕在界面上，先移除它
         if self.back_button.parent:
             self.remove_widget(self.back_button)
@@ -112,7 +116,7 @@ class GameUI(FloatLayout):
         
         # 使用功能類重置遊戲
         current_question, total_questions = self.game_functions.reset_game()
-        self.update_counter(current_question, total_questions)
+        self.update_counter(current_question + 1, total_questions)  # +1 因為題號從1開始顯示
         
         # 確保選項按鈕可見
         self.show_options()
@@ -132,12 +136,15 @@ class GameUI(FloatLayout):
         for btn in self.option_buttons:
             self.options_layout.add_widget(btn)
     
-    def update_counter(self, current_question=0, total_questions=10):
-        """更新問題計數器"""
-        self.counter.text = f"(總共 {total_questions} 題)"
+    def update_counter(self, current_question=1, total_questions=10):
+        """更新問題計數器，顯示當前題號"""
+        self.counter.text = f"第 {current_question} 題 / {total_questions} 題"
     
     def load_question(self):
         """載入新問題"""
+        # 重設答案選擇狀態
+        self.answer_selected = False
+        
         # 使用功能類載入問題
         word, options, correct_index = self.game_functions.load_question()
         
@@ -145,16 +152,31 @@ class GameUI(FloatLayout):
             # 更新問題和選項
             self.title.text = word
             
+            # 更新問題計數器
+            self.update_counter(self.game_functions.current_question, self.game_functions.total_questions)
+            
             # 設置選項按鈕
             for i, option in enumerate(options):
                 self.option_buttons[i].text = option
-                self.option_buttons[i].background_color = (0.4, 0.5, 0.9, 1)
+                self.option_buttons[i].background_color = (0.4, 0.5, 0.9, 1)  # 重設按鈕顏色
+                self.option_buttons[i].disabled = False  # 啟用所有按鈕
         else:
             # 所有問題都完成了
             self.show_results()
     
     def check_answer(self, instance):
         """檢查答案是否正確"""
+        # 如果已經選擇了答案，忽略此次點擊
+        if self.answer_selected:
+            return
+            
+        # 標記已選擇答案
+        self.answer_selected = True
+        
+        # 禁用所有選項按鈕
+        for btn in self.option_buttons:
+            btn.disabled = True
+        
         selected_index = self.option_buttons.index(instance)
         
         # 使用功能類檢查答案
@@ -208,4 +230,4 @@ class GameUI(FloatLayout):
                 self.remove_widget(self.back_button)
             
             # 切換到主畫面
-            self.app.switch_to_main() 
+            self.app.switch_to_main()
