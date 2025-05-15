@@ -43,7 +43,7 @@ class MainUI(FloatLayout):
             font_name="NotoSansTC",
             font_size=dp(24),
             size_hint=(0.5, 0.1),
-            pos_hint={'center_x': 0.5, 'center_y': 0.55},
+            pos_hint={'center_x': 0.5, 'center_y': 0.63},
             background_color=(0.4, 0.5, 0.9, 1),
             opacity=0
         )
@@ -56,7 +56,7 @@ class MainUI(FloatLayout):
             font_name="NotoSansTC",
             font_size=dp(24),
             size_hint=(0.5, 0.1),
-            pos_hint={'center_x': 0.5, 'center_y': 0.4},
+            pos_hint={'center_x': 0.5, 'center_y': 0.48},
             background_color=(0.4, 0.7, 0.7, 1),
             opacity=0
         )
@@ -69,8 +69,8 @@ class MainUI(FloatLayout):
             font_name="NotoSansTC",
             font_size=dp(24),
             size_hint=(0.5, 0.1),
-            pos_hint={'center_x': 0.5, 'center_y': 0.25},
-            background_color=(0.5, 0.5, 0.7, 1),
+            pos_hint={'center_x': 0.5, 'center_y': 0.33},
+            background_color=(0.75, 0.75, 0.75, 1),
             opacity=0
         )
         self.settings_button.bind(on_press=self.setting_ui.show_settings)
@@ -152,8 +152,6 @@ class MainUI(FloatLayout):
             self.app.set_game_params(self.game_level, self.game_questions)
             self.app.switch_to_game()
     
-    
-    
     def show_help(self, instance):
         """顯示遊戲說明"""
         # 創建浮動佈局作為彈出視窗的內容容器
@@ -163,7 +161,7 @@ class MainUI(FloatLayout):
         content_label = Label(
             text=self.help_text,
             font_name="NotoSansTC",
-            font_size=dp(20),
+            font_size=dp(18),
             pos_hint={'center_x': 0.4, 'top': 1.3},
         )
         content_layout.add_widget(content_label)
@@ -171,7 +169,7 @@ class MainUI(FloatLayout):
         # 創建自訂彈出視窗
         popup = Popup(
             title="遊戲說明",
-            title_size=dp(26),  # 放大標題
+            title_size=dp(24),  # 放大標題
             title_font="NotoSansTC",
             title_align="center",  # 標題置中
             content=content_layout,

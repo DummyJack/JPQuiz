@@ -157,8 +157,8 @@ class LogUI:
                 details_btn = Button(
                     text="查看",
                     font_name="NotoSansTC",
-                    font_size=dp(20),
-                    size_hint=(0.4, 0.6),
+                    font_size=dp(18),  # 縮小字體
+                    size_hint=(0.35, 0.5),  # 縮小按鈕
                     pos_hint={'center_x': 0.5, 'center_y': 0.5},
                     background_color=(0.4, 0.5, 0.9, 1)
                 )
