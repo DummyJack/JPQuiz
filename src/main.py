@@ -9,7 +9,7 @@ import os
 
 # 在程式開始前先設定視窗大小，避免啟動時的尺寸變化
 Config.set('graphics', 'width', '600')
-Config.set('graphics', 'height', '800')
+Config.set('graphics', 'height', '780')
 Config.set('graphics', 'resizable', '0')  # 禁止調整大小
 Config.write()  # 寫入配置
 

@@ -230,7 +230,7 @@ class GameUI(FloatLayout):
         self.title.text = result_text
         self.title.font_size = dp(40)  # 更大的字體
         self.title.pos_hint = {'center_x': 0.5, 'center_y': 0.5}  # 置中並稍微往右
-        self.tite.color = (1, 0.8, 0.2, 1)  # 明亮的金黃色
+        self.title.color = (1, 0.8, 0.2, 1)  # 明亮的金黃色
         
         # 保存遊戲日誌，確保只保存一次
         if not self.game_logged:

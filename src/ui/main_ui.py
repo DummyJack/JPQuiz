@@ -56,7 +56,7 @@ class MainUI(FloatLayout):
         # 說明按鈕使用圖標
         self.help_button = Button(
             size_hint=(0.08, 0.06),
-            pos_hint={'right': 0.98, 'top': 0.98},
+            pos_hint={'right': 0.98, 'top': 0.97},
             background_normal='help_icon.png',
             background_down='help_icon.png',
             border=(0, 0, 0, 0),
