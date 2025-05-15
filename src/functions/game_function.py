@@ -14,17 +14,27 @@ class GameFunctions:
         self.question_results = []  # 記錄每題的結果 (True: 正確, False: 錯誤)
         self.current_level = 5  # 預設難度等級
         
-    def reset_game(self):
+    def reset_game(self, level=5, question_count=10):
         """重置遊戲狀態並預先載入所有題目與選項"""
         self.current_question = 0
         self.correct_answers = 0
         self.question_results = []  # 清空結果記錄
+        self.current_level = level  # 設置難度等級
+        self.total_questions = question_count  # 設置題目數量
         
         # 獲取所有單詞以便生成選項
         self.all_words = self.db_manager.get_all_words()
         
-        # 獲取10個隨機問題
-        self.questions = self.db_manager.get_random_words(10)
+        # 根據難度篩選單詞
+        level_words = [word for word in self.all_words if word.get("level", 5) == level]
+        
+        # 確保有足夠的單詞
+        if len(level_words) < question_count:
+            # 如果該難度的單詞不足，則從全部單詞中選擇
+            self.questions = self.db_manager.get_random_words(question_count)
+        else:
+            # 從篩選後的單詞中隨機選擇指定數量
+            self.questions = random.sample(level_words, question_count)
         
         # 預先處理所有問題和選項
         self.questions_with_options = []
@@ -32,9 +42,6 @@ class GameFunctions:
             # 提取日文單詞和正確答案（中文意思）
             japanese_word = question_data["japanese"]
             correct_meaning = question_data["meaning"]
-            
-            # 設置當前等級
-            self.current_level = question_data.get("level", 5)
             
             # 生成選項（包括正確答案和3個隨機錯誤答案）
             options = [correct_meaning]

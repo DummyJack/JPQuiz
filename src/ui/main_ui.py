@@ -8,12 +8,22 @@ from kivy.core.window import Window
 from kivy.graphics import Color, Rectangle
 
 from ui.log_ui import LogUI
+from ui.setting_ui import SettingUI
+from database.db_manager import DBManager
 
 class MainUI(FloatLayout):
     def __init__(self, app=None, **kwargs):
         super(MainUI, self).__init__(**kwargs)
         self.app = app
         self.log_ui = LogUI()
+        self.db_manager = DBManager()
+        
+        # 遊戲設置
+        self.game_level = 5  # 預設難度 N5
+        self.game_questions = 10  # 預設題數
+        
+        # 初始化設置 UI（必須在設置遊戲參數後）
+        self.setting_ui = SettingUI(self)
         
         # 標題
         self.title = Label(
@@ -52,6 +62,19 @@ class MainUI(FloatLayout):
         )
         self.log_button.bind(on_press=self.log_ui.show_logs)
         self.add_widget(self.log_button)
+        
+        # 設置按鈕
+        self.settings_button = Button(
+            text="設置",
+            font_name="NotoSansTC",
+            font_size=dp(24),
+            size_hint=(0.5, 0.1),
+            pos_hint={'center_x': 0.5, 'center_y': 0.25},
+            background_color=(0.5, 0.5, 0.7, 1),
+            opacity=0
+        )
+        self.settings_button.bind(on_press=self.setting_ui.show_settings)
+        self.add_widget(self.settings_button)
         
         # 說明按鈕使用圖標
         self.help_button = Button(
@@ -110,8 +133,12 @@ class MainUI(FloatLayout):
         anim_log = Animation(opacity=0, duration=0) + Animation(opacity=1, duration=0.5, d=0.35)
         anim_log.start(self.log_button)
         
+        # 設置按鈕動畫
+        anim_settings = Animation(opacity=0, duration=0) + Animation(opacity=1, duration=0.5, d=0.4)
+        anim_settings.start(self.settings_button)
+        
         # 幫助按鈕動畫
-        anim3 = Animation(opacity=0, duration=0) + Animation(opacity=1, duration=0.5, d=0.4)
+        anim3 = Animation(opacity=0, duration=0) + Animation(opacity=1, duration=0.5, d=0.45)
         anim3.start(self.help_button)
         
         # 資訊標籤動畫
@@ -121,7 +148,11 @@ class MainUI(FloatLayout):
     def start_game(self, instance):
         """開始遊戲"""
         if self.app:
+            # 設置遊戲參數
+            self.app.set_game_params(self.game_level, self.game_questions)
             self.app.switch_to_game()
+    
+    
     
     def show_help(self, instance):
         """顯示遊戲說明"""

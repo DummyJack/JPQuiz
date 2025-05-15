@@ -8,8 +8,8 @@ from kivy.config import Config
 import os
 
 # 在程式開始前先設定視窗大小，避免啟動時的尺寸變化
-Config.set('graphics', 'width', '600')
-Config.set('graphics', 'height', '780')
+Config.set('graphics', 'width', '500')
+Config.set('graphics', 'height', '700')
 Config.set('graphics', 'resizable', '0')  # 禁止調整大小
 Config.write()  # 寫入配置
 
@@ -68,6 +68,12 @@ class GameScreen(Screen):
         self.rect.pos = instance.pos
 
 class JPQuizApp(App):
+    def __init__(self, **kwargs):
+        super(JPQuizApp, self).__init__(**kwargs)
+        # 遊戲參數
+        self.game_level = 5  # 預設難度 N5
+        self.game_questions = 10  # 預設題數
+    
     def build(self):
         # 創建屏幕管理器
         self.screen_manager = ScreenManager(transition=FadeTransition(duration=0.3))
@@ -86,9 +92,15 @@ class JPQuizApp(App):
         # 返回主屏幕
         return self.screen_manager
     
+    def set_game_params(self, level, question_count):
+        """設置遊戲參數"""
+        self.game_level = level
+        self.game_questions = question_count
+    
     def switch_to_game(self):
         """切換到遊戲畫面"""
-        self.game_screen.ui.reset_game()
+        # 使用設置的參數重置遊戲
+        self.game_screen.ui.reset_game_with_params(self.game_level, self.game_questions)
         self.screen_manager.current = 'game'
     
     def switch_to_main(self):

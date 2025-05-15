@@ -109,9 +109,9 @@ class GameUI(FloatLayout):
         # 返回按鈕動畫
         anim4 = Animation(opacity=1, duration=0.4)
         anim4.start(self.back_button)
-        
-    def reset_game(self):
-        """重置遊戲狀態"""
+    
+    def reset_game_with_params(self, level=5, question_count=10):
+        """使用指定參數重置遊戲狀態"""
         # 重設答案選擇狀態
         self.answer_selected = False
         self.game_logged = False
@@ -124,8 +124,8 @@ class GameUI(FloatLayout):
         self.title.font_size = dp(32)
         self.title.color = (1, 1, 1, 1)  # 恢復原始顏色
         
-        # 使用功能類重置遊戲
-        current_question, total_questions = self.game_function.reset_game()
+        # 使用功能類重置遊戲，並傳入難度和題數
+        current_question, total_questions = self.game_function.reset_game(level, question_count)
         self.update_counter(current_question + 1, total_questions)  # +1 因為題號從1開始顯示
         
         # 確保選項按鈕可見
@@ -139,6 +139,10 @@ class GameUI(FloatLayout):
         
         # 載入問題
         self.load_question()
+        
+    def reset_game(self):
+        """重置遊戲狀態（使用預設值）"""
+        self.reset_game_with_params(5, 10)
     
     def show_options(self):
         """顯示選項按鈕"""
