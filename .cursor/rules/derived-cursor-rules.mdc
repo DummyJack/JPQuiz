@@ -25,6 +25,7 @@ Added 2025-05-14_12-58-例外處理.md (a42e5ca4-b4a1-49c7-8bb4-ce247ab1f512) de
 Added 2025-05-14_13-30-jpquiz-專案-ui-ux.md (cba5d1d7-674c-467c-8a08-c1cf68003a84) detailing further UI/UX updates for the help popup and game UI.
 Added 2025-05-14_07-10-jpquiz-專案-功能.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailing game logic updates and database schema modifications. The logs collection schema is now: `{level: int, questions: [{word_id: ObjectId, is_correct: bool}], total_questions: int, correct_answers: int, timestamp: ISODate}`.
 Added 2025-05-14_07-10-jpquiz-專案-功能.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailing game logic updates and database schema modifications. The logs collection schema is now: `{level: int, questions: [{word_id: ObjectId, is_correct: bool}], total_questions: int, correct_answers: int, timestamp: ISODate}`.
+Added 2025-05-14_13-30-jpquiz-專案-ui-ux.md (cba5d1d7-674c-467c-8a08-c1cf68003a84) detailing UI/UX updates for the help popup and game UI.  The help popup should have a close button ("X") that is light gray, slightly larger than previously specified, positioned in the top right corner. The spacing between items in the `help_text` should be 1.5 lines.
 
 
 ## TECH STACK
@@ -70,9 +71,9 @@ Added 2025-05-14_07-10-jpquiz-專案-功能.md (7208812d-9c2e-4fd9-baf9-ad346a7c
 - After selecting an answer, disable all other answer options until the next question appears.
 - A log screen should display a table of game logs, including difficulty level, correct answers (e.g., "3/10"), and timestamp.  Clicking on the correct answers should display a detailed breakdown of each question's correctness.
 - A settings button should be added to the top-left corner of the main screen. Clicking this button should open a popup with two dropdown menus: one for selecting difficulty (N5-N1), and one for selecting the number of questions (10, 15, 20).  The popup should have a confirm button and a close button (X) in the top right corner.  The popup should not have a title or a separator line. Difficulty defaults to N5 and questions default to 10.  Only available difficulties and question counts supported by the `words` collection should be selectable.
-- The help button should be a circle. The `info_label` should have a background color that matches the main UI. The help popup should have a close button ("X"), no separator line, centered title and text, and appropriate spacing between items in the `help_text`. The close button should be light gray and positioned in the top right corner.
-- The help popup's close button should be light gray, positioned in the top right corner, and slightly larger than previously specified.  The text within the help popup should have spacing of 1.5 lines between items.
-- The help popup should have a close button ("X") that is light gray, slightly larger than previously specified, positioned in the top right corner. The spacing between items in the `help_text` should be 1.5 lines.
+- The help button should be a circle. The `info_label` should have a background color that matches the main UI. The help popup should have a close button ("X"), no separator line, centered title and text, and appropriate spacing between items in the `help_text`. The close button should be light gray and positioned in the top right corner. The close button should be light gray, slightly larger than previously specified, and positioned in the top right corner.  The text within the help popup should have spacing of 1.5 lines between items.
+- The help button should be a circle. The `info_label` should have a background color that matches the main UI. The help popup should have a close button ("X"), no separator line, centered title and text, and appropriate spacing between items in the `help_text`. The close button should be light gray, slightly larger than previously specified, and positioned in the top right corner. The spacing between items in the `help_text` should be 1.5 lines.
+- The help button should be a circle.  The `info_label` should have a background color that matches the main UI. The help popup should have a close button ("X"), light gray, slightly larger than previously specified, positioned in the top right corner. The spacing between items in the `help_text` should be 1.5 lines.
 
 
 ## PROJECT STRUCTURE
@@ -85,18 +86,22 @@ JPQuiz/
 │   ├── functions/
 │   │   └── game_functions.py
 │   │   └── log_functions.py
+│   │   └── validators.py
 │   └── ui/
 │       ├── main_ui.py
 │       └── game_ui.py
 │       └── log_ui.py
+│   └── scripts/
+│       └── insert_n5_data.py
+│   └── database/
+│       ├── db_crud.py
+│       └── db_manager.py
 ├── resources/
 │   ├── fonts/
 │   │   └── NotoSansTC-VariableFont_wght.ttf
 │   └── icons/
 │       └── help_icon.png
 │       └── back.png
-├── src/scripts/
-│   └── insert_n5_data.py
 ├── README.md
 └── requirements.txt
 
