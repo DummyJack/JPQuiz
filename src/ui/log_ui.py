@@ -97,6 +97,7 @@ class LogUI:
                 text="暫無遊戲記錄",
                 font_name="NotoSansTC",
                 size_hint_y=None,
+                font_size=dp(16),
                 height=dp(40),
                 halign='center'
             )

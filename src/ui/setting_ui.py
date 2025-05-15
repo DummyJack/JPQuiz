@@ -41,16 +41,21 @@ class SettingUI:
             level_options, count_options
         )
         
-        # 創建浮動佈局作為彈出視窗的內容容器
-        content_layout = FloatLayout()
+        # 定義下拉選單的顏色（用於保持一致性）
+        spinner_bg_color = (0.4, 0.5, 0.9, 1)
+        
+        # 創建浮動佈局作為根佈局
+        root_layout = FloatLayout()
         
         # 建立垂直佈局來放置選項
         box_layout = BoxLayout(
             orientation='vertical',
-            spacing=dp(20),
+            spacing=dp(12),
             padding=dp(20),
-            size_hint=(0.8, 0.8),
-            pos_hint={'center_x': 0.5, 'center_y': 0.5}
+            size_hint=(None, None),
+            width=dp(280),
+            height=dp(250),  # 縮小高度
+            pos_hint={'center_x': 0.5, 'top': 0.9}  # 將選項容器移至標題下方
         )
         
         # 難度選擇下拉式選單
@@ -58,7 +63,8 @@ class SettingUI:
             text="選擇難度:",
             font_name="NotoSansTC",
             font_size=dp(20),
-            size_hint=(1, 0.2),
+            size_hint=(1, None),
+            height=dp(30),
             halign='left'
         )
         box_layout.add_widget(level_label)
@@ -68,8 +74,10 @@ class SettingUI:
             values=level_options,
             font_name="NotoSansTC",
             font_size=dp(20),
-            size_hint=(1, 0.2),
-            background_color=(0.4, 0.5, 0.9, 1)
+            size_hint=(1, None),
+            height=dp(40),
+            background_color=spinner_bg_color,
+            option_cls=SpinnerOption
         )
         box_layout.add_widget(self.level_spinner)
         
@@ -78,7 +86,8 @@ class SettingUI:
             text="選擇題數:",
             font_name="NotoSansTC",
             font_size=dp(20),
-            size_hint=(1, 0.2),
+            size_hint=(1, None),
+            height=dp(30),
             halign='left'
         )
         box_layout.add_widget(count_label)
@@ -88,41 +97,42 @@ class SettingUI:
             values=count_options,
             font_name="NotoSansTC",
             font_size=dp(20),
-            size_hint=(1, 0.2),
-            background_color=(0.4, 0.5, 0.9, 1)
+            size_hint=(1, None),
+            height=dp(40),
+            background_color=spinner_bg_color,
+            option_cls=SpinnerOption
         )
         box_layout.add_widget(self.count_spinner)
+        
+        # 空間填充
+        spacer = BoxLayout(size_hint=(1, None), height=dp(20))
+        box_layout.add_widget(spacer)
         
         # 確定按鈕
         confirm_button = Button(
             text="確定",
             font_name="NotoSansTC",
             font_size=dp(20),
-            size_hint=(1, 0.2),
+            size_hint=(None, None),
+            size=(dp(100), dp(40)),  # 調整按鈕大小
+            pos_hint={'center_x': 0.5},
             background_color=(0.2, 0.7, 0.2, 1)
         )
         box_layout.add_widget(confirm_button)
         
-        content_layout.add_widget(box_layout)
+        # 將選項佈局添加到根佈局
+        root_layout.add_widget(box_layout)
         
-        # 創建彈出視窗（無標題）
+        # 創建彈出視窗
         self.popup = Popup(
-            content=content_layout,
-            size_hint=(0.8, 0.6),
-            separator_height=0,  # 去除藍線
+            title="",
+            content=root_layout,
+            size_hint=(None, None),  # 使用固定大小
+            size=(dp(320), dp(350)),  # 縮小整體尺寸
+            separator_height=0,  # 去除分隔線
+            background_color=(0.18, 0.18, 0.25, 1),  # 與其他彈出視窗保持一致的背景色
             auto_dismiss=True  # 允許點擊外部關閉
         )
-        
-        # 添加關閉按鈕 (X)
-        close_button = Button(
-            text="X",
-            size_hint=(0.1, 0.1),
-            pos_hint={'right': 0.99, 'top': 0.99},
-            background_color=(0.7, 0.7, 0.7, 1),
-            color=(1, 1, 1, 1)
-        )
-        close_button.bind(on_press=self.popup.dismiss)
-        content_layout.add_widget(close_button)
         
         # 綁定確定按鈕事件
         confirm_button.bind(on_press=self.save_settings)
@@ -144,4 +154,16 @@ class SettingUI:
             self.main_ui.game_questions = question_count
         
         # 關閉彈出視窗
-        self.popup.dismiss() 
+        self.popup.dismiss()
+
+
+# 自定義下拉選項類，用於統一下拉選單顏色
+class SpinnerOption(Button):
+    def __init__(self, **kwargs):
+        super(SpinnerOption, self).__init__(**kwargs)
+        self.background_normal = ''
+        self.background_down = ''
+        self.background_color = (0.4, 0.5, 0.9, 1)  # 與spinner_bg_color相同的顏色
+        self.height = dp(35)
+        self.font_name = "NotoSansTC"
+        self.color = (1, 1, 1, 1)  # 確保文字顏色為白色 
