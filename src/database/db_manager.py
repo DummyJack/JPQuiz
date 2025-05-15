@@ -5,12 +5,8 @@ try:
     # 當從主程式 (main.py) 導入時使用相對路徑
     from database.db_crud import DBCrud
 except ImportError:
-    try:
-        # 當從腳本 (insert_n5_data.py) 導入時使用絕對路徑
-        from src.database.db_crud import DBCrud
-    except ImportError:
-        # 最後嘗試直接導入，適用於當前目錄結構
-        from db_crud import DBCrud
+    # 當從腳本 (insert_n5_data.py) 導入時使用絕對路徑
+    from src.database.db_crud import DBCrud
 
 class DBManager:
     def __init__(self):
