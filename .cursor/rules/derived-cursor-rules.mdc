@@ -17,13 +17,9 @@ Added 2025-05-14_07-10-功能.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailin
 Added 2025-04-01_04-44-jpquiz-專案-初步建立.md (ec3823ee-f169-42a2-97a2-d3aa19bd6552) detailing initial project setup and code examples.
 Added 2025-05-14_07-10-jpquiz-專案-功能.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailing game logic updates and database schema modifications.
 Added 2025-05-14_07-10-log.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailing log implementation.  The log collection schema is: `{level: int, questions: [{word_id: ObjectId, is_correct: bool}], total_questions: int, correct_answers: int, timestamp: ISODate}`.
-Added 2025-05-14_07-10-log.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailing log implementation. The log collection schema is: `{level: int, questions: [{word_id: ObjectId, is_correct: bool}], total_questions: int, correct_answers: int, timestamp: ISODate}`.
-Added 2025-05-14_07-10-log.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailing log implementation. The log collection schema is: `{level: int, questions: [{word_id: ObjectId, is_correct: bool}], total_questions: int, correct_answers: int, timestamp: ISODate}`.
-Added 2025-04-01_04-44-jpquiz-專案-初步建立.md detailing initial project setup and code examples.
 Added 2025-05-14_13-30-jpquiz-專案-ui-ux.md (cba5d1d7-674c-467c-8a08-c1cf68003a84) detailing UI/UX updates for the help popup.
 Added 2025-05-14_12-58-例外處理.md (a42e5ca4-b4a1-49c7-8bb4-ce247ab1f512) detailing exception handling improvements.
 Added 2025-05-14_13-30-jpquiz-專案-ui-ux.md (cba5d1d7-674c-467c-8a08-c1cf68003a84) detailing further UI/UX updates for the help popup and game UI.
-Added 2025-05-14_07-10-jpquiz-專案-功能.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailing game logic updates and database schema modifications. The logs collection schema is now: `{level: int, questions: [{word_id: ObjectId, is_correct: bool}], total_questions: int, correct_answers: int, timestamp: ISODate}`.
 Added 2025-05-14_07-10-jpquiz-專案-功能.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailing game logic updates and database schema modifications. The logs collection schema is now: `{level: int, questions: [{word_id: ObjectId, is_correct: bool}], total_questions: int, correct_answers: int, timestamp: ISODate}`.
 Added 2025-05-14_13-30-jpquiz-專案-ui-ux.md (cba5d1d7-674c-467c-8a08-c1cf68003a84) detailing UI/UX updates for the help popup and game UI.  The help popup should have a close button ("X") that is light gray, slightly larger than previously specified, positioned in the top right corner. The spacing between items in the `help_text` should be 1.5 lines.
 
@@ -33,7 +29,7 @@ Added 2025-05-14_13-30-jpquiz-專案-ui-ux.md (cba5d1d7-674c-467c-8a08-c1cf68003
 - Programming Language: Python
 - Framework: Kivy (version 2.2.1)
 - Database: MongoDB (ensure service is running; otherwise, fallback to test data)
-- Libraries: pymongo (version 4.5.0)
+- Libraries: pymongo (version 4.5.0), jpype (for tabula)
 - Font: NotoSansTC (located in `resources/fonts/NotoSansTC-VariableFont_wght.ttf`)
 
 
@@ -74,6 +70,7 @@ Added 2025-05-14_13-30-jpquiz-專案-ui-ux.md (cba5d1d7-674c-467c-8a08-c1cf68003
 - The help button should be a circle. The `info_label` should have a background color that matches the main UI. The help popup should have a close button ("X"), no separator line, centered title and text, and appropriate spacing between items in the `help_text`. The close button should be light gray and positioned in the top right corner. The close button should be light gray, slightly larger than previously specified, and positioned in the top right corner.  The text within the help popup should have spacing of 1.5 lines between items.
 - The help button should be a circle. The `info_label` should have a background color that matches the main UI. The help popup should have a close button ("X"), no separator line, centered title and text, and appropriate spacing between items in the `help_text`. The close button should be light gray, slightly larger than previously specified, and positioned in the top right corner. The spacing between items in the `help_text` should be 1.5 lines.
 - The help button should be a circle.  The `info_label` should have a background color that matches the main UI. The help popup should have a close button ("X"), light gray, slightly larger than previously specified, positioned in the top right corner. The spacing between items in the `help_text` should be 1.5 lines.
+- After selecting an answer, the background color of all option buttons should change to a lighter gray (0.8, 0.8, 0.8, 1).  Correct answers should have a light green background (0.5, 0.9, 0.5, 1), and incorrect answers should have a light red background (0.9, 0.5, 0.5, 1).
 
 
 ## PROJECT STRUCTURE
@@ -87,10 +84,12 @@ JPQuiz/
 │   │   └── game_functions.py
 │   │   └── log_functions.py
 │   │   └── validators.py
+│   │   └── setting_functions.py
 │   └── ui/
 │       ├── main_ui.py
 │       └── game_ui.py
 │       └── log_ui.py
+│       └── setting_ui.py
 │   └── scripts/
 │       └── insert_n5_data.py
 │   └── database/
@@ -146,10 +145,12 @@ JPQuiz/
 │   │   └── game_functions.py
 │   │   └── log_functions.py
 │   │   └── validators.py
+│   │   └── setting_functions.py
 │   └── ui/
 │       ├── main_ui.py
 │       └── game_ui.py
 │       └── log_ui.py
+│       └── setting_ui.py
 │   └── scripts/
 │       └── insert_n5_data.py
 │   └── database/
