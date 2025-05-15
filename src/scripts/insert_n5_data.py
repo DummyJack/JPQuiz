@@ -1,9 +1,23 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
-from src.database.db_manager import DBManager
+# 確保可以從任何位置導入模組
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(os.path.dirname(current_dir))
+sys.path.insert(0, project_root)
+
+# 嘗試導入，使用兼容的導入方式
+try:
+    from src.database.db_manager import DBManager
+except ImportError:
+    try:
+        from database.db_manager import DBManager
+    except ImportError:
+        # 最後嘗試直接從腳本所在目錄的上級目錄導入
+        sys.path.insert(0, os.path.dirname(current_dir))
+        from database.db_manager import DBManager
+
 import tabula
 import pandas as pd
 
@@ -60,17 +74,18 @@ def insert_n5_data():
     
     try:
         # 確保 collection 存在
-        if db_manager.db is not None and db_manager.collection is not None:
+        collection = db_manager.crud.collection
+        if db_manager.db is not None and collection is not None:
             for word in data:
                 try:
                     # 檢查是否已存在相同單詞
-                    existing = db_manager.collection.find_one({"japanese": word["japanese"]})
+                    existing = collection.find_one({"japanese": word["japanese"]})
                     if existing:
                         print(f"單詞已存在，跳過: {word['japanese']}")
                         continue
                         
                     # 插入數據到 words collection
-                    result = db_manager.collection.insert_one(word)
+                    result = collection.insert_one(word)
                     if result.inserted_id:
                         success_count += 1
                         print(f"成功插入: {word['japanese']} - {word['meaning']}")

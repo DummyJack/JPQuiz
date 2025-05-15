@@ -1,5 +1,16 @@
 import pymongo
-from database.db_crud import DBCrud
+
+# 使用 try-except 兼容不同的導入路徑
+try:
+    # 當從主程式 (main.py) 導入時使用相對路徑
+    from database.db_crud import DBCrud
+except ImportError:
+    try:
+        # 當從腳本 (insert_n5_data.py) 導入時使用絕對路徑
+        from src.database.db_crud import DBCrud
+    except ImportError:
+        # 最後嘗試直接導入，適用於當前目錄結構
+        from db_crud import DBCrud
 
 class DBManager:
     def __init__(self):
@@ -32,6 +43,14 @@ class DBManager:
     def get_all_words(self):
         """獲取所有單詞"""
         return self.crud.get_all_words()
+    
+    def get_words_by_level(self, level=5):
+        """根據難度級別獲取單詞"""
+        return self.crud.get_words_by_level(level)
+    
+    def count_words_by_level(self):
+        """統計每個難度級別的單詞數量"""
+        return self.crud.count_words_by_level()
     
     def get_random_words(self, count=10):
         """從資料庫中隨機獲取指定數量的單詞"""

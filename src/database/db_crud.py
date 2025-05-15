@@ -41,6 +41,36 @@ class DBCrud:
 
         return words
 
+    def get_words_by_level(self, level=5):
+        """根據難度級別獲取單詞"""
+        if self.collection is None:
+            print("無法獲取單詞：資料庫連接未建立")
+            return []
+            
+        # 查詢指定難度的單詞
+        words = list(self.collection.find({"level": level}))
+        return words
+    
+    def count_words_by_level(self):
+        """統計每個難度級別的單詞數量"""
+        if self.collection is None:
+            print("無法統計單詞：資料庫連接未建立")
+            return {}
+            
+        # 使用聚合函數統計每個難度的單詞數量
+        pipeline = [
+            {"$group": {"_id": "$level", "count": {"$sum": 1}}}
+        ]
+        
+        results = list(self.collection.aggregate(pipeline))
+        
+        # 將結果轉換為字典格式
+        level_counts = {}
+        for result in results:
+            level_counts[result["_id"]] = result["count"]
+            
+        return level_counts
+
     def get_random_words(self, count=10):
         """從資料庫中隨機獲取指定數量的單詞"""
 
