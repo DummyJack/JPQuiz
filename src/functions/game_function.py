@@ -114,6 +114,19 @@ class GameFunctions:
             "question_results": self.question_results
         }
     
+    def save_game_log(self, log_function):
+        """保存遊戲結果到日誌"""
+        # 獲取日誌數據
+        log_data = self.get_log_data()
+        
+        # 保存到日誌
+        log_function.save_game_log(
+            level=log_data["level"],
+            questions=log_data["questions"],
+            correct_answers=log_data["correct_answers"],
+            question_results=log_data["question_results"]
+        )
+    
     def get_question_details(self):
         """獲取問題詳細信息列表"""
         details = []
