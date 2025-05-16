@@ -3,6 +3,7 @@ import sys
 import os
 import tempfile
 import logging
+import re
 from pathlib import Path
 
 # 設置日誌
@@ -26,6 +27,48 @@ import pandas as pd
 BASE_DIR = project_root
 DATA_FILE_PATH = BASE_DIR / "resources" / "docs" / "N5.pdf"
 
+
+def clean_text(text):
+    """清理文本，去除冒號後面的內容"""
+    # 分割字符串，取冒號前面的部分
+    if ":" in text:
+        return text.split(":", 1)[0].strip()
+    # 處理全形冒號的情況
+    if "：" in text:
+        return text.split("：", 1)[0].strip()
+    return text.strip()
+
+
+def process_japanese_text(text):
+    """處理日文文本，將漢字和假名用括號括起來"""
+    text = clean_text(text)
+    
+    # 檢查是否有括號，如果已經有括號，則不再處理
+    if "（" in text and "）" in text:
+        return text
+    
+    # 假設括號在文本後面，或字與讀音分別在不同列
+    # 檢查是否已有讀音注釋（通常在括號中）
+    match = re.search(r'[(（](.*?)[)）]', text)
+    if match:
+        return text
+    
+    # 如果沒有讀音注釋，檢查是否有漢字
+    has_kanji = any(('\u4e00' <= char <= '\u9fff') for char in text)
+    if not has_kanji:
+        return text  # 如果沒有漢字，直接返回原文本
+    
+    # 檢查是否有假名提示 (通常用空格分隔)
+    parts = text.split()
+    if len(parts) > 1:
+        main_text = parts[0]
+        reading = ' '.join(parts[1:])
+        return f"{main_text}（{reading}）"
+    
+    # 如果只有一個部分但包含漢字和假名
+    # 這是個簡化處理，實際上需要更複雜的日文分析
+    return text
+    
 
 def read_pdf_data(file_path):
     """從PDF文件中讀取表格數據並轉換為日文單詞字典列表"""
@@ -60,8 +103,12 @@ def read_pdf_data(file_path):
                 if len(df.columns) < 2:
                     continue
 
-                japanese = str(df.iloc[i, 0]).strip() if pd.notna(df.iloc[i, 0]) else ""
-                meaning = str(df.iloc[i, 1]).strip() if pd.notna(df.iloc[i, 1]) else ""
+                japanese_raw = str(df.iloc[i, 0]).strip() if pd.notna(df.iloc[i, 0]) else ""
+                meaning_raw = str(df.iloc[i, 1]).strip() if pd.notna(df.iloc[i, 1]) else ""
+
+                # 清理文本，去除冒號後面的內容
+                japanese = clean_text(japanese_raw)
+                meaning = clean_text(meaning_raw)
 
                 # 驗證單詞有效性
                 if (
@@ -73,6 +120,9 @@ def read_pdf_data(file_path):
                     and japanese != "japanese"
                     and meaning != "meaning"
                 ):
+                    # 記錄清理前後的差異
+                    if japanese != japanese_raw or meaning != meaning_raw:
+                        logger.debug(f"文本已清理: '{japanese_raw}' -> '{japanese}', '{meaning_raw}' -> '{meaning}'")
 
                     word_data = {"japanese": japanese, "level": 5, "meaning": meaning}
                     data.append(word_data)
