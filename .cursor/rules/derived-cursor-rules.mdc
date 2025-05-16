@@ -1,6 +1,11 @@
 ---
 description: AI rules derived by SpecStory from the project AI interaction history
 globs: *
+---
+
+---
+description: AI rules derived by SpecStory from the project AI interaction history
+globs: *
 alwaysApply: false
 ---
 
@@ -23,6 +28,7 @@ Added 2025-05-14_12-58-例外處理.md (a42e5ca4-b4a1-49c7-8bb4-ce247ab1f512) de
 Added 2025-05-14_13-30-jpquiz-專案-ui-ux.md (cba5d1d7-674c-467c-8a08-c1cf68003a84) detailing further UI/UX updates for the help popup and game UI.
 Added 2025-05-14_07-10-jpquiz-專案-功能.md (7208812d-9c2e-4fd9-baf9-ad346a7cc5ee) detailing game logic updates and database schema modifications. The logs collection schema is now: `{level: int, questions: [{word_id: ObjectId, is_correct: bool}], total_questions: int, correct_answers: int, timestamp: ISODate}`.
 Added 2025-05-14_13-30-jpquiz-專案-ui-ux.md (cba5d1d7-674c-467c-8a08-c1cf68003a84) detailing UI/UX updates for the help popup and game UI.  The help popup should have a close button ("X") that is light gray, slightly larger than previously specified, positioned in the top right corner. The spacing between items in the `help_text` should be 1.5 lines.
+Added 2025-05-14_13-30-jpquiz-專案-ui-ux.md (cba5d1d7-674c-467c-8a08-c1cf68003a84) detailing UI/UX modifications to the main UI: help button should be a circle; info_label background color should match the main UI.
 
 
 ## TECH STACK
@@ -48,6 +54,7 @@ Added 2025-05-14_13-30-jpquiz-專案-ui-ux.md (cba5d1d7-674c-467c-8a08-c1cf68003
 - Before each release, perform thorough testing.
 - Testing should be conducted using the `run.py` file in the project root directory.
 - All `__pycache__` folders should be ignored in the `.gitignore` file.
+- The `crawlHistory.py` script should be removed from the `run.py` workflow.  The `.gitignore` file should ignore all `__pycache__` folders.
 
 
 ## DEBUGGING
@@ -58,21 +65,15 @@ Added 2025-05-14_13-30-jpquiz-專案-ui-ux.md (cba5d1d7-674c-467c-8a08-c1cf68003
 ## UI/UX GUIDELINES
 
 - Main UI elements should include a title ("日文學習益智遊戲"), a "Start Game" button, a help icon (@help_icon.png), and author information ("製作人：書賢、Cursor") displayed as static text.  All UI elements should have a smooth transition and consistent background styling. Use animation to improve the user experience and reduce visual jarring during screen transitions. Use a consistent background color across all screens. The background color should be (0.15, 0.15, 0.2, 1).
-- Game UI elements should include a question label, four option buttons, a question counter (displaying the current question number out of the total), and author information displayed as static text. The "Return to Main Menu" button should only appear after all questions are answered. The back button should be disabled during active question answering. After selecting an answer, the background color of all option buttons should change to a lighter gray (e.g., (0.8, 0.8, 0.8, 1)).  The back button icon (@back.png) should always be visible. After answering a question, the background color of all option buttons should change to a lighter gray (0.7, 0.7, 0.7, 1).
+- Game UI elements should include a question label, four option buttons, a question counter (displaying the current question number out of the total), and author information displayed as static text. The "Return to Main Menu" button should only appear after all questions are answered. The back button should be disabled during active question answering. After selecting an answer, the background color of all option buttons should change to a lighter gray (e.g., (0.8, 0.8, 0.8, 1)).  The back button icon (@back.png) should always be visible. After answering a question, the background color of all option buttons should change to a lighter gray (0.7, 0.7, 0.7, 1).  The question should display both Kanji and Hiragana/Katakana, with the latter above the former. If the text in an option button exceeds the button's width, it should wrap to the next line.
 - Use the NotoSansTC font for all text elements.
 - Error handling:  If a connection to MongoDB fails, the application should gracefully fallback to using test data.
 - The "Start Game" button should only be clickable once per game session.  After the game ends, the button should become clickable again.
 - Minimize visual jarring during transitions between the main and game screens.  Consider smooth transitions and consistent background styling.  Use animation to improve the user experience and reduce visual jarring during screen transitions. Use a consistent background color across all screens.
 - After selecting an answer, disable all other answer options until the next question appears.
 - A log screen should display a table of game logs, including difficulty level, correct answers (e.g., "3/10"), and timestamp.  Clicking on the correct answers should display a detailed breakdown of each question's correctness.
-- A settings button should be added to the top-left corner of the main screen. Clicking this button should open a popup with two dropdown menus: one for selecting difficulty (N5-N1), and one for selecting the number of questions (10, 15, 20).  The popup should have a confirm button and a close button (X) in the top right corner.  The popup should not have a title or a separator line. Difficulty defaults to N5 and questions default to 10.  Only available difficulties and question counts supported by the `words` collection should be selectable.
-- The help button should be a circle. The `info_label` should have a background color that matches the main UI. The help popup should have a close button ("X"), no separator line, centered title and text, and appropriate spacing between items in the `help_text`. The close button should be light gray and positioned in the top right corner. The close button should be light gray, slightly larger than previously specified, and positioned in the top right corner.  The text within the help popup should have spacing of 1.5 lines between items.
-- The help button should be a circle. The `info_label` should have a background color that matches the main UI. The help popup should have a close button ("X"), no separator line, centered title and text, and appropriate spacing between items in the `help_text`. The close button should be light gray, slightly larger than previously specified, and positioned in the top right corner. The spacing between items in the `help_text` should be 1.5 lines.
-- The help button should be a circle. The `info_label` should have a background color that matches the main UI. The help popup should have a close button ("X"), light gray, slightly larger than previously specified, positioned in the top right corner. The spacing between items in the `help_text` should be 1.5 lines.
-- After selecting an answer, the background color of all option buttons should change to a lighter gray (0.8, 0.8, 0.8, 1).  Correct answers should have a light green background (0.5, 0.9, 0.5, 1), and incorrect answers should have a light red background (0.9, 0.5, 0.5, 1).
-- The help button should be a circle. The `info_label` should have a background color that matches the main UI. The help popup should have a close button ("X"), light gray, slightly larger than previously specified, positioned in the top right corner. The spacing between items in the `help_text` should be 1.5 lines.  The start game button, history button, and settings button should be repositioned higher on the screen. The settings button should have a more visually distinct color that complements the main UI.
-- The help button should be a circle. The `info_label` should have a background color that matches the main UI. The help popup should have a close button ("X"), light gray, slightly larger than previously specified, positioned in the top right corner. The spacing between items in the `help_text` should be 1.5 lines.
-- The help button should be a circle. The info_label should have a background color matching the main UI. The help popup should have a light gray close button ("X"), slightly larger than previously specified, positioned in the top right corner. The spacing between items in the help_text should be 1.5 lines.
+- A settings button should be added to the top-left corner of the main screen. Clicking this button should open a popup with two dropdown menus: one for selecting difficulty (N5-N1), and one for selecting the number of questions (10, 15, 20).  The popup should have a confirm button and a close button (X) in the top right corner.  The popup should not have a title or a separator line. Difficulty defaults to N5 and questions default to 10.  Only available difficulties and question counts supported by the `words` collection should be selectable. The background color of the dropdown options should match the background color of the dropdown buttons.
+- The help button should be a circle. The `info_label` should have a background color that matches the main UI. The help popup should have a close button ("X"), light gray, slightly larger than previously specified, positioned in the top right corner. The spacing between items in the `help_text` should be 1.5 lines. The start game button, history button, and settings button should be repositioned higher on the screen. The settings button should have a more visually distinct color that complements the main UI.  The help popup should have a close button ("X") that is light gray, slightly larger than previously specified, positioned in the top right corner. The spacing between items in the `help_text` should be 1.5 lines.
 
 
 ## PROJECT STRUCTURE
@@ -103,6 +104,8 @@ JPQuiz/
 │   └── icons/
 │       └── help_icon.png
 │       └── back.png
+│   └── docs/
+│       └── N5.pdf
 ├── README.md
 └── requirements.txt
 
@@ -112,12 +115,16 @@ JPQuiz/
 
 ```
 __pycache__/
-
-# SpecStory
+*/__pycache__/
+*/*/__pycache__/
+*/*/*/__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+.specstory/
 .specstory/.project.json
-
-# SpecStory derived-cursor-rules.mdc backup files
 .specstory/ai_rules_backups/*
+
 ```
 
 ## DATABASE RULES
@@ -126,10 +133,10 @@ __pycache__/
 - The `japanese` field must contain only Japanese text (hiragana, katakana, or kanji).
 - The `level` field must be an integer between 1 and 5 (inclusive).
 - The `meaning` field must be a string.
-- Data initialization: The database is initialized by running `src/scripts/insert_n5_data.py`. A backup set of test data is available if this script fails.  The initialization process now runs `src/scripts/insert_n5_data.py` to populate the database. If this script fails, a backup set of test data is used.  Data deletion is prevented if it would result in fewer than 10 entries in the collection.
+- Data initialization: The database is initialized by running `src/scripts/insert_n5_data.py`. A backup set of test data is available if this script fails.  The initialization process now runs `src/scripts/insert_n5_data.py` to populate the database. If this script fails, a backup set of test data is used.  Data deletion is prevented if it would result in fewer than 10 entries in the collection.  The `insert_n5_data.py` script should remove text after a colon (':') in both Japanese and Chinese fields.  The `insert_n5_data.py` script will remove text after a colon (':') in both Japanese and Chinese fields.
 - Data validation:  The `words` collection uses MongoDB's schema validation to enforce the following rules:
     - `japanese`: Must be a string containing only Japanese characters (hiragana, katakana, or kanji).
     - `level`: Must be an integer between 1 and 5 (inclusive).
     - `meaning`: Must be a string.
     - Minimum 10 entries must exist in the `words` collection at all times. Deletion is prevented if this would result in fewer than 10 entries.
-- A `logs` collection must be created to store game logs. The schema for the `logs` collection is: `{level: int, questions: [{word_id: ObjectId, is_correct: bool}], total_questions: int, correct_answers: int, timestamp: ISODate}`.  The `question` field should reference the `_id` of a document in the `words` collection.  Logs are recorded after each game session.
+- A `logs` collection must be created to store game logs. The schema for the `logs` collection is: `{level: int, questions: [{word_id: ObjectId, is_correct: bool}], total_questions: int, correct_answers: int, timestamp: ISODate}`.  The `question` field should reference the `_id` of a document in the `words` collection.  Logs are recorded after each game session.  The `word_id` in the `questions` array should reference the `_id` field in the `words` collection.
