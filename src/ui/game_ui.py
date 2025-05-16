@@ -6,6 +6,7 @@ from kivy.metrics import dp
 from kivy.clock import Clock
 from kivy.animation import Animation
 from kivy.graphics import Color, Rectangle
+from kivy.uix.boxlayout import BoxLayout  # 新增匯入BoxLayout用於漢字和假名排列
 
 from functions.game_function import GameFunctions
 from functions.log_function import LogFunctions
@@ -31,7 +32,7 @@ class GameUI(FloatLayout):
         )
         self.add_widget(self.counter)
         
-        # 標題 (新位置)
+        # 漢字標題 (新位置)
         self.title = Label(
             text="資料庫中隨機選出一個單字",
             font_name="NotoSansTC",
@@ -42,6 +43,18 @@ class GameUI(FloatLayout):
             opacity=0
         )
         self.add_widget(self.title)
+        
+        # 假名標籤，位於漢字上方
+        self.furigana = Label(
+            text="",
+            font_name="NotoSansTC",
+            font_size=dp(20),  # 假名字體較小
+            size_hint=(1, 0.1),
+            pos_hint={'bottom': 0.9, 'center_x': 0.5},  # 放置在漢字標題上方
+            color=(0.9, 0.9, 1, 1),  # 稍微淺色
+            opacity=0
+        )
+        self.add_widget(self.furigana)
         
         # 選項按鈕
         self.options_layout = GridLayout(
@@ -61,7 +74,13 @@ class GameUI(FloatLayout):
                 text=f"選項 {i+1}",
                 font_name="NotoSansTC",
                 font_size=dp(20),
-                background_color=(0.4, 0.5, 0.9, 1)
+                background_color=(0.4, 0.5, 0.9, 1),
+                text_size=(dp(200), None),  # 設定文字區域寬度，高度自動調整
+                halign='center',            # 水平居中對齊
+                valign='middle',            # 垂直居中對齊
+                padding_x=dp(10),           # 文字左右內邊距
+                padding_y=dp(5),            # 文字上下內邊距
+                line_height=1.2             # 行高，提高可讀性
             )
             btn.bind(on_press=self.check_answer)
             self.option_buttons.append(btn)
@@ -85,18 +104,24 @@ class GameUI(FloatLayout):
         """為界面元素添加動畫效果"""
         # 清除所有動畫
         Animation.cancel_all(self.title)
+        Animation.cancel_all(self.furigana)  # 加入對假名的動畫控制
         Animation.cancel_all(self.counter)
         Animation.cancel_all(self.options_layout)
         Animation.cancel_all(self.back_button)
         
         # 重設透明度
         self.title.opacity = 0
+        self.furigana.opacity = 0  # 設置假名透明度
         self.counter.opacity = 0
         self.options_layout.opacity = 0
         
         # 計數器動畫 (先於標題)
         anim1 = Animation(opacity=1, duration=0.4)
         anim1.start(self.counter)
+        
+        # 假名動畫
+        anim_furigana = Animation(opacity=0, duration=0) + Animation(opacity=1, duration=0.4, d=0.1)
+        anim_furigana.start(self.furigana)
         
         # 標題動畫
         anim2 = Animation(opacity=0, duration=0) + Animation(opacity=1, duration=0.4, d=0.1)
@@ -118,6 +143,7 @@ class GameUI(FloatLayout):
         
         # 更新標題
         self.title.text = "資料庫中隨機選出一個單字"
+        self.furigana.text = ""  # 清空假名
         
         # 恢復標題原始位置和字體大小
         self.title.pos_hint = {'top': 0.9, 'center_x': 0.5}
@@ -166,8 +192,18 @@ class GameUI(FloatLayout):
         word, options, correct_index = self.game_function.load_question()
         
         if word is not None:
-            # 更新問題和選項
-            self.title.text = word
+            # 解析問題（假設格式為「漢字[假名]」）
+            if '[' in word and ']' in word:
+                kanji_part = word.split('[')[0].strip()
+                furigana_part = word.split('[')[1].split(']')[0].strip()
+                
+                # 更新漢字和假名標籤
+                self.title.text = kanji_part
+                self.furigana.text = furigana_part
+            else:
+                # 如果沒有假名標記，則整個問題顯示在標題中
+                self.title.text = word
+                self.furigana.text = ""
             
             # 更新問題計數器
             self.update_counter(self.game_function.current_question, self.game_function.total_questions)
@@ -223,8 +259,9 @@ class GameUI(FloatLayout):
         # 使用功能類獲取結果
         correct_answers, total_questions = self.game_function.get_results()
         
-        # 隱藏問題計數器
+        # 隱藏問題計數器和假名標籤
         self.counter.opacity = 0
+        self.furigana.opacity = 0
         
         # 清空選項佈局
         self.options_layout.clear_widgets()
