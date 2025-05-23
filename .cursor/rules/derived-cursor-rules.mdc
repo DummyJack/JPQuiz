@@ -1,20 +1,8 @@
 ---
 description: AI rules derived by SpecStory from the project AI interaction history
 globs: *
----
-
----
-description: AI rules derived by SpecStory from the project AI interaction history
-globs: *
 alwaysApply: false
 ---
-
----
-description: AI rules derived by SpecStory from the project AI interaction history
-globs: *
-alwaysApply: false
----
-
 ## PROJECT DOCUMENTATION & CONTEXT SYSTEM
 
 All project documentation, including design specifications, coding standards, and meeting notes, should be stored in the project's root directory.  Use markdown (.md) format for all documents.  Version updates should be noted within the relevant sections of this file.  The file `2025-04-01_04-44-jpquiz-專案-初步建立.md` (ec3823ee-f169-42a2-97a2-d3aa19bd6552) documents the initial project requirements. The project's initial structure and code examples are documented in `2025-04-01_04-44-jpquiz-專案-初步建立.md`. Version 2025-05-14 updates include new file structure and code examples.  Additional project requirements are documented in `2025-04-01_04-44-jpquiz-專案-初步建立.md` (ec3823ee-f169-42a2-97a2-d3aa19bd6552).  The document `2025-04-01_04-44-jpquiz-專案-初步建立.md` (ec3823ee-f169-42a2-97a2-d3aa19bd6552) details additional project requirements and initial code implementation. Files `2025-04-01_04-44-jpquiz-專案-初步建立.md` (ec3823ee-f169-42a2-97a2-97a2-d3aa19bd6552) contain further project requirements and initial code implementation details.  The document `2025-04-01_04-44-jpquiz-專案-初步建立.md` (ec3823ee-f169-42a2-97a2-d3aa19bd6552) should be referenced for UI design specifications (@mainUI.png, @gameUI.png).  The file `2025-05-14_04-58-例外處理.md` (a42e5ca4-b4a1-49c7-8bb4-ce247ab1f512) contains additional updates and modifications to the project.
@@ -115,16 +103,10 @@ JPQuiz/
 
 ```
 __pycache__/
-*/__pycache__/
-*/*/__pycache__/
-*/*/*/__pycache__/
-**/__pycache__/
-*.py[cod]
-*$py.class
-.specstory/
+# SpecStory
 .specstory/.project.json
+# SpecStory derived-cursor-rules.mdc backup files
 .specstory/ai_rules_backups/*
-
 ```
 
 ## DATABASE RULES
